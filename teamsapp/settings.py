@@ -26,7 +26,7 @@ SECRET_KEY = 'mwwy+8it+3w-h8)@mbx_)2hcac&feku+@!%c*hg9b8dk*^me1n'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['c921589b.ngrok.io', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['agile-events.doesntexist.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
