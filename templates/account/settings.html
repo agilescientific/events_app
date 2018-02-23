@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+{% load i18n %}
+
+{% block body_class %}account account-settings{% endblock %}
+
+{% block head_title %}{% trans "Account" %}{% endblock %}
+
+{% block content %}
+<!-- Page Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-5 mx-auto pddn-100-top">
+            <form method="POST" action="{% url "account_settings" %}">
+                <legend>{% trans "Account" %}</legend>
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

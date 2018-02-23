@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+{% block title %}Login{% endblock %}
+
+<!-- Page Content -->
+<div class="container">
+
+  <!-- Project One -->
+  <div class="row">
+    <div class="col-md-7 mx-auto">
+        <h2 class="pddn-100-top">Login</h2>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Login</button>
+        </form>
+    </div>
+  </div>
+  <!-- /.row -->
+
+</div>
+<!-- /.container -->
+{% endblock %}

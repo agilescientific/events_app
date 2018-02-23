@@ -1,0 +1,33 @@
+{% extends 'base.html' %} {% load staticfiles %} {% block content %}
+<!-- Page Content -->
+<div class="container">
+
+  <!-- Page Heading -->
+  <h1 class="my-4 pddn-30-top pddn-20-bottom">Upcoming Events
+  </h1>
+
+  {% for e in events %}
+  <!-- Project One -->
+  <div class="row">
+      <div class="col-md-5">
+        <a href="#">
+          <img class="img-fluid rounded mb-3 mb-md-0" src="{{ e.img_url|safe }}" alt="">
+        </a>
+      </div>
+      <div class="col-md-7">
+        <h3>{{ e.event_title }}</h3>
+        <h4><small>{{ e.event_date }} - Time: {{ e.event_time }}</small></h4>
+        <p>{{ e.description_text|safe }}</p>
+        <a class="btn btn-primary" href="#">View Event</a>
+      </div>
+  </div>
+  
+  <hr>
+  <!-- /.row -->
+  {% endfor %}
+
+  <div class="pddn-100-top"></div>
+
+</div>
+<!-- /.container -->
+{% endblock %}

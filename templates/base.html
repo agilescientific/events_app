@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    {% block title %}<title>Agile* - Events</title>{% endblock %}
+
+    <!-- Bootstrap core CSS -->
+    {% load staticfiles %}
+    {% load bootstrap4 %}
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    <!-- <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"> -->
+  
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+
+  </head>
+
+  <body>
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <img src="{% static 'img/agile_logo.png' %}" height="80px"/>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">EVENTS</a>
+            </li>
+            
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="/account/settings">PROFILE</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/account/logout"><i class="fas fa-sign-out-alt"></i></a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="/account/signup">REGISTER</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/account/login">LOGIN</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    {% block content %} {% endblock %}
+
+    <div class="pddn-100-top"></div>
+    <!-- Footer -->
+    <hr>
+    <footer class="py-5 bg-white text-center">
+      <div class="container">
+          <p>© 2018 Agile Scientific •&nbsp;PO Box 336, Mahone Bay NS B0J 2E0, Canada • +1.902.980.0130 • hello@agilegeoscience.com<br><img src="https://www.dropbox.com/s/g7sriffw9kpxo2r/open_geoscience.png?raw=1" width="100px">&nbsp;&nbsp;Except where noted, all of Agile's content is licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a></p>
+      </div>
+      <!-- /.container -->
+    </footer>
+
+    {% block scripts %} {% endblock %}
+    <!-- Bootstrap core JavaScript -->
+    {% bootstrap_javascript jquery='full' %}
+    <!-- <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script> -->
+    <!-- <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script> -->
+
+  </body>
+
+</html>
