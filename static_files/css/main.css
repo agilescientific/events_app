@@ -1,0 +1,93 @@
+/*!
+ * Start Bootstrap - 1 Col Portfolio (https://startbootstrap.com/template-overviews/1-col-portfolio)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-1-col-portfolio/blob/master/LICENSE)
+ */
+
+body {
+  padding-top: 0px;
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-top: 0px;
+  }
+}
+
+.pagination {
+  margin-bottom: 15px;
+}
+
+.navbar {
+  -webkit-box-shadow: 0 8px 6px -6px #999;
+  -moz-box-shadow: 0 8px 6px -6px #999;
+  box-shadow: 0 8px 6px -6px #999;
+}
+
+.alert {
+  margin-bottom: 0rem;
+}
+
+/*********  
+Paddings 
+*********/
+.pddn-neg-10-top {padding-top: -10px}
+.pddn-0 {padding: 0px !important}
+.pddn-10 {padding: 10px}
+.pddn-20 {padding: 20px}
+.pddn-30 {padding: 30px}
+.pddn-40 {padding: 40px}
+.pddn-50 {padding: 50px}
+.pddn-60 {padding: 60px}
+.pddn-5p-top {padding-top: 5%}
+.pddn-10p-top {padding-top: 10%}
+.pddn-15p-top {padding-top: 15%}
+.pddn-10-top {padding-top: 10px}
+.pddn-20-top {padding-top: 20px}
+.pddn-30-top {padding-top: 30px}
+.pddn-40-top {padding-top: 40px}
+.pddn-50-top {padding-top: 50px}
+.pddn-60-top {padding-top: 60px}
+.pddn-100-top {padding-top: 100px}
+.pddn-10-btm {padding-bottom: 10px}
+.pddn-20-btm {padding-bottom: 20px}
+.pddn-30-btm {padding-bottom: 30px}
+.pddn-40-btm {padding-bottom: 40px}
+.pddn-50-btm {padding-bottom: 50px}
+.pddn-60-btm {padding-bottom: 60px}
+.pddn-0-top-btm {padding:0}
+.pddn-10-top-btm {padding: 10px 0}
+.pddn-20-top-btm {padding: 20px 0}
+.pddn-30-top-btm {padding: 30px 0}
+.pddn-40-top-btm {padding: 40px 0}
+.pddn-50-top-btm {padding: 50px 0}
+.pddn-60-top-btm {padding: 60px 0}
+.pdd-section-portfolio {padding:50px 0 20px 0}
+.pdd-section-portfolio-top {padding:50px 0 0 0}
+
+/*********  
+Margins 
+*********/
+.mrgn-10-top {margin-top: 10px}
+.mrgn-15-top {margin-top: 15px}
+.mrgn-20-top {margin-top: 20px}
+.mrgn-30-top {margin-top: 30px}
+.mrgn-40-top {margin-top: 40px}
+.mrgn-50-top {margin-top: 50px}
+.mrgn-60-top {margin-top: 60px}
+.mrgn-70-top {margin-top: 70px}
+.mrgn-80-top {margin-top: 80px}
+.mrgn-90-top {margin-top: 90px}
+.mrgn-100-top {margin-top: 100px}
+.mrgn-10-btm {margin-bottom: 10px}
+.mrgn-20-btm {margin-bottom: 20px}
+.mrgn-30-btm {margin-bottom: 30px}
+.mrgn-40-btm {margin-bottom: 40px}
+.mrgn-50-btm {margin-bottom: 50px}
+.mrgn-60-btm {margin-bottom: 60px}
+.mrgn-10-top-btm {margin: 10px 0}
+.mrgn-20-top-btm {margin: 20px 0}
+.mrgn-30-top-btm {margin: 30px 0}
+.mrgn-40-top-btm {margin: 40px 0}
+.mrgn-50-top-btm {margin: 50px 0}
+.mrgn-60-top-btm {margin: 60px 0}
