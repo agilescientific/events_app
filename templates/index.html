@@ -18,7 +18,7 @@
         <h3>{{ e.event_title }}</h3>
         <h4><small>{{ e.event_date }} - Time: {{ e.event_time }}</small></h4>
         <p>{{ e.description_text|safe }}</p>
-        <a class="btn btn-primary" href="#">View Event</a>
+        <a class="btn btn-primary" href="{{ e.get_absolute_url }}">View Event</a>
       </div>
   </div>
   

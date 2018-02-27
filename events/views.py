@@ -1,14 +1,15 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView, DetailView
 from django.http import HttpResponse
 from .models import Event
 # Create your views here.
 
-class IndexView(TemplateView):
+class IndexView(ListView):
     template_name = "index.html"
-    queryset = Event.objects.all()
+    model = Event
+    context_object_name = 'events'
 
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        context['events'] = context['view'].queryset
-        return context
+class EventDetailView(DetailView):
+    template_name = "eventDetail.html"
+    model = Event
+    context_object_name = 'event'

@@ -28,6 +28,11 @@ body {
   margin-bottom: 0rem;
 }
 
+.breadcrumb {
+  background-color: #F8F9Fa;
+  border-radius: 0px;
+}
+
 /*********  
 Paddings 
 *********/
