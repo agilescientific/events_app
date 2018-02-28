@@ -13,3 +13,8 @@ class EventDetailView(DetailView):
     template_name = "eventDetail.html"
     model = Event
     context_object_name = 'event'
+
+class RegisterEventView(DetailView):
+    template_name = "eventDetail.html"
+    model = Event
+    context_object_name = 'event'

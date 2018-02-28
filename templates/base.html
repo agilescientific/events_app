@@ -43,11 +43,22 @@
             </li>
             
             {% if user.is_authenticated %}
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" href="/account/settings">PROFILE</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/account/logout"><i class="fas fa-sign-out-alt"></i></a>
+              <a class="nav-link" href="/account/logout"></i></a>
+            </li> -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="far fa-user-circle fa-lg"></i> {{ user.username }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="/account/settings">Profile</a>
+                  <a class="dropdown-item" href="/account/settings">Account</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/account/logout"><i class="fas fa-sign-out-alt"></i>Logout</a>
+                </div>
             </li>
             {% else %}
             <li class="nav-item">
