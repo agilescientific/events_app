@@ -1,46 +1,54 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
 {% block content %}
 {% include "breadcrumbs.html" %}
 
 <!-- Page Heading -->
 <div class="row pddn-30-top pddn-20-bottom">
   <div class="col-md-8">
-    <h1 class="head-pad">
-      {{ event.event_title }}
-    </h1>
+    <h3 class="head-pad">
+      Teams
+    </h3>
   </div>
   <div class="col-md-4 head-right">
-    {% if registered == False %}
-      <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#joinModalCenter">
-          Join
+    {% if registered == True %}
+      <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#createTeamModal">
+          Create Team
       </button>
     {% endif %}
   </div>
 </div>
 
-<!-- Project -->
 <div class="row">
-    <div class="col-md-5">
-      <img class="img-fluid rounded mb-3 mb-md-0" src="{{ event.img_url|safe }}" alt="">
-    </div>
-    <div class="col-md-7">
-      <h4><small>{{ event.event_date }} - Time: {{ event.event_time }}</small></h4>
-      <p>{{ event.description_text|safe }}</p>
-    </div>
+  <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Team Name</th>
+          <th scope="col">Team Leader</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in teams %}
+        <tr>
+          <th scope="row">{{ forloop.counter }}</th>
+          <td>{{ t.name }}</td>
+          <td>{{ t.member.username }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+  </table>
 </div>
-<!-- /.row -->
+
 
 <div class="pddn-100-top"></div>
 
-
 <!-- Modal -->
-<div class="modal fade" id="joinModalCenter" tabindex="-1" role="dialog" aria-labelledby="joinModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="createTeamModal" tabindex="-1" role="dialog" aria-labelledby="createTeamModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="joinModalLongTitle">Join this event</h5>
+        <h5 class="modal-title" id="createTeamModalTitle">Create Team</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -50,9 +58,10 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-success" href="{{ event.id }}/join">Accept</a>
+        <a class="btn btn-success" href="#">Create</a>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}

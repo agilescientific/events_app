@@ -12,6 +12,22 @@ body {
   body {
     padding-top: 0px;
   }
+  .head-right {
+    text-align: left;
+  }
+  .head-pad {
+    margin-top: 0px !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+.head-pad {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.head-right {
+  text-align: right;
 }
 
 .pagination {

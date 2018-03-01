@@ -142,3 +142,6 @@ DEFAULT_FROM_EMAIL = 'diego@agilescientific.com'
 # Django Account email config.
 THEME_CONTACT_EMAIL = 'hello@agilescientific.com'
 ACCOUNT_EMAIL_CONFIRMATION_EMAIL = True
+
+# URL Append slash
+APPEND_SLASH = True

@@ -22,17 +22,26 @@ class Event(models.Model):
         """
         return reverse('event-detail', args=[str(self.id)])
 
+class EventRegistration(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    register_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.member.username + " - " + self.event.event_title
+
+
 class Team(models.Model):
     name = models.CharField(max_length=100)
-    event = models.OneToOneField(Event, on_delete=models.CASCADE)
-    member = models.OneToOneField(User, on_delete=models.CASCADE)
-    leader = models.OneToOneField(User, related_name='teamleader', on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    leader = models.ForeignKey(User, related_name='teamleader', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name + " - " + self.member.username + " - " + self.event.event_title
 
     def get_absolute_url(self):
         """
-        Returns the url to access a particular author instance.
+        Returns the url to access a particular team instance.
         """
         return reverse('team-detail', args=[str(self.id)])
