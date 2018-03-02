@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'crispy_forms',
+    'ajax_select',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +147,5 @@ ACCOUNT_EMAIL_CONFIRMATION_EMAIL = True
 
 # URL Append slash
 APPEND_SLASH = True
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

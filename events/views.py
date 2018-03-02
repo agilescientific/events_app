@@ -1,12 +1,16 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views import View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from .models import Event, EventRegistration, Team
+from .forms import TeamForm
 # Create your views here.
 
 class IndexView(ListView):
@@ -81,3 +85,50 @@ class JoinEventView(LoginRequiredMixin, View):
                         member = User.objects.get(id=self.request.user.id),
                         )
         return HttpResponseRedirect('/event/{}'.format(event_pk))
+
+class CreateTeamView(LoginRequiredMixin, FormView):
+    template_name = 'teamRegistration.html'
+    model = Team
+    form_class = TeamForm
+    success_url = '/'
+
+    def get_form(self, form_class=form_class):
+        """
+        Check if the user has already filled in the form.
+        If so, then show the form populated with those answers,
+        to let user change them.
+        """
+        try:
+            team = Team.objects.get(leader=self.request.user, event=self.kwargs['pk'])
+            return form_class(instance=team, **self.get_form_kwargs())
+        except Team.DoesNotExist:
+            return form_class(**self.get_form_kwargs())
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        event_pk = self.kwargs['pk']
+        self.object = form.save(commit=False)
+        self.object.leader = self.request.user
+        self.object.event = Event.objects.get(id=event_pk)
+        self.object.save()
+        form.save_m2m()
+        self.success_url = '/event/{}/teams'.format(event_pk)
+        return super().form_valid(form)
+
+    def get_context_data(self,**kwargs):
+        context = super(CreateTeamView, self).get_context_data(**kwargs)
+        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+
+        return context
+
+class TeamDetailView(DetailView):
+    template_name = "teamDetail.html"
+    model = Team
+    context_object_name = 'team'
+
+    def get_context_data(self,**kwargs):
+        context = super(TeamDetailView, self).get_context_data(**kwargs)
+        context['event'] = Event.objects.get(id = context['team'].event.id)
+
+        return context

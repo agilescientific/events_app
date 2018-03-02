@@ -12,9 +12,7 @@
   </div>
   <div class="col-md-4 head-right">
     {% if registered == True %}
-      <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#createTeamModal">
-          Create Team
-      </button>
+      <a class="btn btn-success head-pad" href="/event/{{ event.id }}/create_team">Create Team</a>
     {% endif %}
   </div>
 </div>
@@ -32,8 +30,8 @@
         {% for t in teams %}
         <tr>
           <th scope="row">{{ forloop.counter }}</th>
-          <td>{{ t.name }}</td>
-          <td>{{ t.member.username }}</td>
+          <td><a href="{{ t.get_absolute_url }}">{{ t.name }}</a></td>
+          <td>{{ t.leader.username }}</td>
         </tr>
         {% endfor %}
       </tbody>

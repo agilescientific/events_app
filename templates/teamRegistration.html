@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "breadcrumbs.html" %}
+
+<div class="row">
+    <!-- Page Heading -->
+    <div class="col-md-8 mx-auto">
+        <h3 class="my-4 pddn-30-top pddn-20-bottom">Create Team</h3>
+    </div>
+</div>
+<div class="row pddn-30-top">
+    <div class="col-md-8 mx-auto">
+        {{ form.media }}
+        {% crispy form %}
+    </div>
+</div>
+{% endblock %}

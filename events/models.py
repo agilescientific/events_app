@@ -34,11 +34,11 @@ class EventRegistration(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    members = models.ManyToManyField(User)
     leader = models.ForeignKey(User, related_name='teamleader', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name + " - " + self.member.username + " - " + self.event.event_title
+        return self.name + " - " + self.event.event_title
 
     def get_absolute_url(self):
         """
