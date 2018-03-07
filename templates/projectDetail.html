@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+{% include "breadcrumbs.html" %}
+
+<!-- Page Heading -->
+<div class="row pddn-30-top pddn-20-bottom">
+  <div class="col-md-8 mx-auto">
+    <h1 class="head-pad">
+      {{ project.name }} - {{ event.event_title }}
+    </h1>
+    <hr>
+  </div>
+</div>
+
+<!-- Project -->
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h3 class="pddn-30-top">Resources</h3>
+        <a href="{{ project.github }}">Github</a>
+    </div>
+</div>
+<!-- /.row -->
+
+<div class="pddn-100-top"></div>
+
+{% endblock %}

@@ -4,13 +4,15 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.views import View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .models import Event, EventRegistration, Team
-from .forms import TeamForm
+from .models import Event, EventRegistration, Team, Project, EventClass
+from .forms import TeamForm, ProjectForm
+
+from urllib.parse import urlparse
 # Create your views here.
 
 class IndexView(ListView):
@@ -57,6 +59,14 @@ class TeamListView(ListView):
     queryset = Team.objects
     context_object_name = 'teams'
 
+    def render_to_response(self, context):
+        event_pk = self.kwargs['pk']
+        event_obj = Event.objects.get(id=event_pk)
+        if str(event_obj.event_class) != 'hackathon':
+            return HttpResponseRedirect('/event/{}'.format(event_pk))
+
+        return super(TeamListView, self).render_to_response(context)
+
     def get_queryset(self):
         queryset = super().get_queryset()
         self.teams = queryset.filter(event_id = self.kwargs['pk'])
@@ -64,6 +74,36 @@ class TeamListView(ListView):
 
     def get_context_data(self,**kwargs):
         context = super(TeamListView, self).get_context_data(**kwargs)
+        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
+                                                     event_id = self.kwargs['pk']))
+        if q_reg > 0:
+            context['registered'] = True
+        else:
+            context['registered'] = False
+
+        return context
+
+class ProjectListView(ListView):
+    template_name = "projectList.html"
+    queryset = Project.objects
+    context_object_name = 'projects'
+
+    def render_to_response(self, context):
+        event_pk = self.kwargs['pk']
+        event_obj = Event.objects.get(id=event_pk)
+        if str(event_obj.event_class) != 'projects':
+            return HttpResponseRedirect('/event/{}'.format(event_pk))
+
+        return super(ProjectListView, self).render_to_response(context)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.projects = queryset.filter(event_id = self.kwargs['pk'])
+        return self.projects
+
+    def get_context_data(self,**kwargs):
+        context = super(ProjectListView, self).get_context_data(**kwargs)
         context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
         q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
                                                      event_id = self.kwargs['pk']))
@@ -122,6 +162,30 @@ class CreateTeamView(LoginRequiredMixin, FormView):
 
         return context
 
+class CreateProjectView(LoginRequiredMixin, FormView):
+    template_name = 'projectRegistration.html'
+    model = Project
+    form_class = ProjectForm
+    success_url = '/'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        event_pk = self.kwargs['pk']
+        self.object = form.save(commit=False)
+        self.object.creator = self.request.user
+        self.object.event = Event.objects.get(id=event_pk)
+        self.object.save()
+        form.save_m2m()
+        self.success_url = '/event/{}/projects'.format(event_pk)
+        return super().form_valid(form)
+
+    def get_context_data(self,**kwargs):
+        context = super(CreateProjectView, self).get_context_data(**kwargs)
+        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        context['creator'] = self.request.user
+        return context
+
 class TeamDetailView(DetailView):
     template_name = "teamDetail.html"
     model = Team
@@ -130,5 +194,16 @@ class TeamDetailView(DetailView):
     def get_context_data(self,**kwargs):
         context = super(TeamDetailView, self).get_context_data(**kwargs)
         context['event'] = Event.objects.get(id = context['team'].event.id)
+
+        return context
+
+class ProjectDetailView(DetailView):
+    template_name = "projectDetail.html"
+    model = Project
+    context_object_name = 'project'
+
+    def get_context_data(self,**kwargs):
+        context = super(ProjectDetailView, self).get_context_data(**kwargs)
+        context['event'] = Event.objects.get(id = context['project'].event.id)
 
         return context

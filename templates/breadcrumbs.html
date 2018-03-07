@@ -1,5 +1,9 @@
 <nav class="breadcrumb">
     <a class="breadcrumb-item" href="/event/{{ event.id }}">Description</a>
-    <a class="breadcrumb-item" href="/event/{{ event.id }}/teams">Teams</a>
+    {% if event.event_class_id == 2 %}
+        <a class="breadcrumb-item" href="/event/{{ event.id }}/projects">Projects</a>
+    {% elif event.event_class_id == 1 %}
+        <a class="breadcrumb-item" href="/event/{{ event.id }}/teams">Teams</a>
+    {% endif %}
     <a class="breadcrumb-item" href="/event/{{ event.id }}/participants">Participants</a>
 </nav>

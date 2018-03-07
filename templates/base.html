@@ -21,6 +21,8 @@
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
 
     <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js"></script>
+
 
   </head>
 
@@ -88,9 +90,9 @@
       <!-- /.container -->
     </footer>
 
-    {% block scripts %} {% endblock %}
     <!-- Bootstrap core JavaScript -->
     {% bootstrap_javascript jquery='full' %}
+    {% block scripts %} {% endblock %}
     <!-- <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script> -->
     <!-- <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script> -->
 
