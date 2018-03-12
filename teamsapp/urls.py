@@ -17,10 +17,13 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.contrib.auth import views as auth_views
 from ajax_select import urls as ajax_select_urls
+from uprofile.views import SettingsView
 
 urlpatterns = [
     path('', include('events.urls'), name='home'),
+    path('', include('uprofile.urls'), name='user_profile'),
     path('admin/', admin.site.urls),
+    path("account/settings/", SettingsView.as_view(), name="account_signup"),
     path('account/', include("account.urls")),
     path('login/', auth_views.login, name='login'),
     path('logout/', auth_views.logout, name='logout'),

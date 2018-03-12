@@ -8,11 +8,10 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 from ajax_select.fields import AutoCompleteSelectMultipleField
 
-
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ['name', 'leader', 'members']
+        fields = ['name', 'members']
 
     name = forms.CharField()
     leader = forms.CharField()
@@ -23,7 +22,6 @@ class TeamForm(forms.ModelForm):
     helper.form_class = 'form-horizontal'
     helper.layout = Layout(
                             Field('name', css_class='input-xlarge'),
-                            Field('leader', css_class='input-xlarge'),
                             'members',
                             FormActions(
                                 Submit('save_changes', 'Create', css_class="btn-primary"),

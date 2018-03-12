@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['agile-events.doesntexist.com', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'uprofile',
     'account',
     'bootstrap4',
     'events.apps.EventsConfig',

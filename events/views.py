@@ -159,7 +159,7 @@ class CreateTeamView(LoginRequiredMixin, FormView):
     def get_context_data(self,**kwargs):
         context = super(CreateTeamView, self).get_context_data(**kwargs)
         context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
-
+        context['creator'] = self.request.user
         return context
 
 class CreateProjectView(LoginRequiredMixin, FormView):
