@@ -62,15 +62,16 @@ class UProfileView(DetailView):
 
     def get_object(self, queryset=None):
         slug = self.kwargs['slug']
-        user = get_object_or_404(User, username=slug)
-        d_obj, create = self.model.objects.get_or_create(user_id=user.id)
-        print(d_obj)
+        user_from_slug = get_object_or_404(User, username=slug)
+        d_obj, create = self.model.objects.get_or_create(user_id=user_from_slug.id)
         return d_obj
 
     def get_context_data(self,**kwargs):
         context = super(UProfileView, self).get_context_data(**kwargs)
-        context['userdata'] = get_object_or_404(User, username = self.kwargs['slug'])
-        context['registration'] = EventRegistration.objects.filter(member_id=self.request.user)
+        slug = self.kwargs['slug']
+        user_from_slug = get_object_or_404(User, username = slug)
+        context['userdata'] = user_from_slug
+        context['registration'] = EventRegistration.objects.filter(member_id=user_from_slug.id)
         return context
 
 class ProfileEventListView(ListView):
