@@ -14,6 +14,13 @@ class UProfile(models.Model):
     github_uname = models.CharField(max_length=50, null=True, blank=True)
     about = models.TextField(max_length=100, null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Extender User Profile'
+        verbose_name_plural = 'Extender User Profiles'
+
+    def __str__(self):
+        return self.user.username
+
 @receiver(post_save, sender=User)
 def handle_user_save(sender, instance, created, **kwargs):
     if created:

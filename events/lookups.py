@@ -1,5 +1,5 @@
 from ajax_select import register, LookupChannel
-from .models import User
+from .models import User, EventRegistration
 
 @register('users')
 class UsersLookup(LookupChannel):

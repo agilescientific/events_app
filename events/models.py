@@ -33,8 +33,8 @@ class Event(models.Model):
         return reverse('event-detail', args=[str(self.id)])
 
 class EventRegistration(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, related_name='event_info', on_delete=models.CASCADE)
+    member = models.ForeignKey(User, related_name='user_info', on_delete=models.CASCADE)
     register_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -58,8 +58,9 @@ class Team(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=100)
-    detail_small = models.TextField(max_length=200, default="", verbose_name='Description')
-    detail_long = models.TextField(max_length=500, default="", verbose_name='Long Description')
+    detail_small = models.TextField(max_length=500, default="", verbose_name='Description')
+    detail_long = models.TextField(max_length=1000, default="", verbose_name='Long Description')
+    main_url = models.CharField(max_length=100, default='')
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     creator = models.ForeignKey(User, related_name='projectCreator', on_delete=models.CASCADE)
     votes = models.BigIntegerField(default=0)

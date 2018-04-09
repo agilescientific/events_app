@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'uprofile',
     'account',
     'bootstrap4',
+    'django_extensions',
     'events.apps.EventsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -136,6 +137,8 @@ SITE_ID = 1
 
 # Login redirect (see urls.py for names)
 LOGIN_REDIRECT_URL = 'home'
+# Login URL
+LOGIN_URL = '/account/login/'
 
 # Use console backend for now
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

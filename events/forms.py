@@ -14,7 +14,6 @@ class TeamForm(forms.ModelForm):
         fields = ['name', 'members']
 
     name = forms.CharField()
-    leader = forms.CharField()
     members = AutoCompleteSelectMultipleField('users')
 
     # Uni-form

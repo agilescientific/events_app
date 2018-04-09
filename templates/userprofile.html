@@ -2,14 +2,14 @@
 {% load staticfiles %}
 
 {% block content %}
-<div class="row my-2">
+<div class="row my-2 pddn-30-top">
     <div class="col-lg-8 order-lg-2">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
+                <a href="#profile" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
             </li>
             <li class="nav-item">
-                <a href="" data-target="#teams" data-toggle="tab" class="nav-link">Teams</a>
+                <a href="#teams" data-target="#teams" data-toggle="tab" class="nav-link">Teams</a>
             </li>
         </ul>
         
@@ -29,52 +29,33 @@
                         <p>
                             {{ profile.about }}
                         </p>
+                        {% if profile.github_uname %}
                         <h6><i class="fab fa-github"></i> &nbsp; <a href='https://github.com/{{ profile.github_uname }}'>{{ profile.github_uname }}</a></h6>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <h6>Badges</h6>
-                        <a href="#" class="badge badge-dark badge-pill">html5</a>
-                        <a href="#" class="badge badge-dark badge-pill">react</a>
-                        <a href="#" class="badge badge-dark badge-pill">codeply</a>
-                        <a href="#" class="badge badge-dark badge-pill">angularjs</a>
-                        <a href="#" class="badge badge-dark badge-pill">css3</a>
+                        <a href="#" class="badge badge-dark badge-pill">Machine Learning</a>
+                        <a href="#" class="badge badge-dark badge-pill">Python</a>
+                        <a href="#" class="badge badge-dark badge-pill">html</a>
                         <a href="#" class="badge badge-dark badge-pill">jquery</a>
                         <a href="#" class="badge badge-dark badge-pill">bootstrap</a>
-                        <a href="#" class="badge badge-dark badge-pill">responsive-design</a>
                         <hr>
-                        <span class="badge badge-primary"><i class="fa fa-user"></i> 900 Followers</span>
+                        <!-- <span class="badge badge-primary"><i class="fa fa-user"></i> 900 Followers</span>
                         <span class="badge badge-success"><i class="fa fa-cog"></i> 43 Forks</span>
-                        <span class="badge badge-danger"><i class="fa fa-eye"></i> 245 Views</span>
+                        <span class="badge badge-danger"><i class="fa fa-eye"></i> 245 Views</span> -->
                     </div>
                     <div class="col-md-12">
                         <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
                         <table class="table table-sm table-hover table-striped">
-                            <tbody>                                    
+                            <tbody>
+                                {% for r in registration %}
                                 <tr>
                                     <td>
-                                        <strong>Abby</strong> joined ACME Project Team in <strong>`Collaboration`</strong>
+                                        Joined the <strong><a href="{{ r.event.get_absolute_url }}">{{ r.event.event_title }}</a></strong>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <strong>Gary</strong> deleted My Board1 in <strong>`Discussions`</strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>Kensington</strong> deleted MyBoard3 in <strong>`Discussions`</strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>John</strong> deleted My Board1 in <strong>`Discussions`</strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>Skell</strong> deleted his post Look at Why this is.. in <strong>`Discussions`</strong>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -207,13 +188,30 @@
         </div>
     </div>
     <div class="col-lg-4 order-lg-1 text-center">
-        <img src="//placehold.it/150" class="mx-auto img-fluid img-circle d-block" alt="avatar">
+        <img src="/static/img/diego.jpg" width="300px" class="mx-auto img-fluid img-circle d-block" alt="avatar">
         <h6 class="mt-2">Upload a different photo</h6>
         <label class="custom-file">
             <input type="file" id="file" class="custom-file-input">
-            <span class="custom-file-control">Choose file</span>
+            <input type="button" class="btn btn-primary" value="Upload New Photo">
         </label>
     </div>
 </div>
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+    var url = document.location.toString();
+    if (url.match('#')) {
+        $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+    } 
+
+    // Change hash for page-reload
+    $('.nav-tabs a').on('shown.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+    })
+})
+</script>
+
+{% endblock %}
 
 {% endblock %}

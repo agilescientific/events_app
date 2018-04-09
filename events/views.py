@@ -126,7 +126,7 @@ class JoinEventView(LoginRequiredMixin, View):
                         )
         return HttpResponseRedirect('/event/{}'.format(event_pk))
 
-class CreateTeamView(LoginRequiredMixin, FormView):
+class CreateTeamView(FormView):
     template_name = 'teamRegistration.html'
     model = Team
     form_class = TeamForm
@@ -153,6 +153,8 @@ class CreateTeamView(LoginRequiredMixin, FormView):
         self.object.event = Event.objects.get(id=event_pk)
         self.object.save()
         form.save_m2m()
+        self.object.members.add(self.request.user)
+
         self.success_url = '/event/{}/teams'.format(event_pk)
         return super().form_valid(form)
 

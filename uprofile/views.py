@@ -13,7 +13,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from .models import UProfile
-from events.models import Team, EventRegistration
+from events.models import Team, EventRegistration, Event
 from django.db.models import Q
 
 
@@ -70,8 +70,7 @@ class UProfileView(DetailView):
     def get_context_data(self,**kwargs):
         context = super(UProfileView, self).get_context_data(**kwargs)
         context['userdata'] = get_object_or_404(User, username = self.kwargs['slug'])
-        context['teams'] = Team.objects.filter(Q(members=self.request.user))
-        print(context['teams'][0].event_id)
+        context['registration'] = EventRegistration.objects.filter(member_id=self.request.user)
         return context
 
 class ProfileEventListView(ListView):

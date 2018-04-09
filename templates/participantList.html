@@ -5,30 +5,30 @@
 
 <div class="row">
   <!-- Page Heading -->
-  <h3 class="my-4 pddn-30-top pddn-20-bottom">Participants</h3>
+  <h3 class="my-4 pddn-30-top pddn-20-bottom"> {{ event.event_title }} - Participants</h3>
 </div>
 
 <div class="row">
-  <table class="table">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">First Name</th>
-          <th scope="col">Last Name</th>
-          <th scope="col">User</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for p in participants %}
-        <tr>
-          <th scope="row">{{ forloop.counter }}</th>
-          <td>{{ p.member.first_name }}</td>
-          <td>{{ p.member.last_name }}</td>
-          <td>{{ p.member.username }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-  </table>
+  <div class="col-md-8 mx-auto">
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in participants %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ p.member.first_name }} {{ p.member.last_name }}</td>
+            <td><a href="/users/{{ p.member.username }}"> {{ p.member.username }} </a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+  </div>
 </div>
 
 
