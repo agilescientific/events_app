@@ -5,13 +5,13 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
     <h1>{% if poster == request.user %}{% trans "My messages" %}{% else %}{% blocktrans with username=poster.username %}{{ username }}'s posts{% endblocktrans %}{% endif %}</h1>
     <br />
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-6 col-md-4 forum-actions-block">
+  <div class="col-6 col-md-4 forum-actions-block">
     {% if paginator.count > 0 %}
       <p class="text-muted">
         {% blocktrans trimmed count counter=paginator.count %}
@@ -24,14 +24,14 @@
       <p class="text-muted">{% trans "No posts found" %}</p>
     {% endif %}
   </div>
-  <div class="col-xs-12 col-md-8 pagination-block">
+  <div class="col-12 col-md-8 pagination-block">
     {% with "pagination-sm" as pagination_size %}
       {% include "partials/pagination.html" %}
     {% endwith %}
   </div>
 </div>
 <div class="row member-posts">
-  <div class="col-xs-12">
+  <div class="col-12">
     {% for post in posts %}
       <div id="{{ post.id }}" class="panel panel-default post">
         <div class="panel-body">
@@ -45,7 +45,7 @@
                 <p>
                   <small class="text-muted">
                   {% spaceless %}
-                    <i class="fa fa-clock-o"></i>&nbsp;
+                    <i class="far fa-clock"></i>&nbsp;
                     {% url 'forum_member:profile' post.poster_id as poster_url %}
                     {% blocktrans trimmed with poster_url=poster_url username=post.poster.username creation_date=post.created %}
                       By: <a href="{{ poster_url }}">{{ username }}</a> on {{ creation_date }}
@@ -73,7 +73,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-12 col-md-12 pagination-block">
+  <div class="col-12 col-md-12 pagination-block">
     {% with "pagination-sm" as pagination_size %}
       {% include "partials/pagination.html" %}
     {% endwith %}

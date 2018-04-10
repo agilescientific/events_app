@@ -6,19 +6,19 @@
 {% block sub_title %}{{ topic.subject }}{% endblock sub_title %}
 
 {% block content %}
-<div class="row"><div class="col-xs-12"><h1>{{ topic.subject }}</h1></div></div>
+<div class="row"><div class="col-12"><h1>{{ topic.subject }}</h1></div></div>
 <div class="row">
-  <div class="col-xs-12 col-md-4 topic-actions-block">
+  <div class="col-12 col-md-4 topic-actions-block">
   {% include "forum_conversation/partials/topic_detail_actions.html" %}
   </div>
-  <div class="col-xs-12 col-md-8 pagination-block">
+  <div class="col-12 col-md-8 pagination-block">
   {% with "pagination-sm" as pagination_size %}
   {% include "partials/pagination.html" %}
   {% endwith %}
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
   {% for post in posts %}
     {% if forloop.first and post.is_topic_head and poll %}
     {% include "forum_conversation/forum_polls/poll_detail.html" %}
@@ -46,7 +46,7 @@
               <p>
                 <small class="text-muted">
                 {% spaceless %}
-                <i class="fa fa-clock-o"></i>&nbsp;
+                <i class="far fa-clock"></i>&nbsp;
                 {% if post.poster %}
                   {% url 'forum_member:profile' post.poster_id as poster_url %}
                   {% blocktrans trimmed with poster_url=poster_url username=post.poster.username creation_date=post.created %}
@@ -105,10 +105,10 @@
   </div>
 </div>
 <div class="row">
-    <div class="col-xs-6 col-md-4 topic-actions-block">
+    <div class="col-6 col-md-4 topic-actions-block">
         {% include "forum_conversation/partials/topic_detail_actions.html" %}
     </div>
-    <div class="col-xs-12 col-md-8 pagination-block">
+    <div class="col-12 col-md-8 pagination-block">
         {% with "pagination-sm" as pagination_size %}
             {% include "partials/pagination.html" %}
         {% endwith %}

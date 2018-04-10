@@ -5,7 +5,7 @@
 {% load forum_tracking_tags %}
 
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
     {% if forum_contents.nodes %}
     {% recurseforumcontents forum_contents %}
     {% if node.level == root_level %}
@@ -13,7 +13,7 @@
     <div class="panel panel-default forumlist">
       <div class="panel-heading">
         <div class="row panel-row">
-          <div class="col-md-8 col-sm-9 col-xs-12 forum-name-col">
+          <div class="col-md-8 col-sm-9 col-12 forum-name-col">
             <h3 class="panel-title"><a href="{% url 'forum:forum' node.obj.slug node.obj.id %}" class="brand">{{ node.obj.name }}</a></h3>
           </div>
           <div class="col-md-1 forum-count-col hidden-sm hidden-xs">{% trans "Topics" %}</div>
@@ -31,7 +31,7 @@
     <div class="panel panel-default forumlist">
       <div class="panel-heading">
         <div class="row panel-row">
-          <div class="col-md-8 col-sm-9 col-xs-12 forum-name-col">
+          <div class="col-md-8 col-sm-9 col-12 forum-name-col">
             <h3 class="panel-title">{% trans "Forums" %}</h3>
           </div>
           <div class="col-md-1 forum-count-col hidden-sm hidden-xs">{% trans "Topics" %}</div>
@@ -44,11 +44,11 @@
     {% endwith %}
     <div class="row panel-row">
       {% if not node.obj.is_link %}
-      <div class="col-md-7 col-sm-9 col-xs-11 forum-name">
+      <div class="col-md-7 col-sm-9 col-11 forum-name">
         <table class="forum-data-table">
           <tr>
             <td class="forum-icon {% if node.obj in unread_forums %}unread{% endif %}">
-              <i class="fa fa-circle-o fa-2x"></i>
+              <i class="far fa-dot-circle fa-2x"></i>
             </td>
             <td>
             {% if node.obj.image %}
@@ -81,7 +81,7 @@
         By: {{ poster_username }}
         {% endblocktrans %}
         {% endif %}
-        &nbsp;<a href="{% url 'forum_conversation:topic' node.obj.slug node.obj.pk node.last_post.topic.slug node.last_post.topic.pk %}?post={{ node.last_post.pk }}#{{ node.last_post.pk }}"><i class="fa fa-arrow-circle-o-right "></i></a>
+        &nbsp;<a href="{% url 'forum_conversation:topic' node.obj.slug node.obj.pk node.last_post.topic.slug node.last_post.topic.pk %}?post={{ node.last_post.pk }}#{{ node.last_post.pk }}"><i class="fas fa-arrow-circle-right "></i></a>
         <br />
         {{ node.last_post.created }}
         {% else %}
@@ -89,7 +89,7 @@
         {% endif %}
       </div>
       {% else %}
-      <div class="col-md-8 col-sm-9 col-xs-11 forum-name" colspan="2">
+      <div class="col-md-8 col-sm-9 col-11 forum-name" colspan="2">
         <table class="forum-data-table">
           <tr>
             <td class="forum-icon link"><i class="fa fa-link fa-2x"></i></td>
@@ -120,7 +120,7 @@
     {% if node.parent.obj.is_category %}
     <div class="row panel-row">
       {% if not node.obj.is_link %}
-      <div class="col-md-7 col-sm-9 col-xs-11 forum-name">
+      <div class="col-md-7 col-sm-9 col-11 forum-name">
         <table class="forum-data-table">
           <tr>
             <td class="forum-icon {% if node.obj in unread_forums %}unread{% endif %}"><i class="fa fa-circle-o fa-2x"></i></td>
@@ -162,7 +162,7 @@
         {% endif %}
       </div>
       {% else %}
-      <div class="col-md-8 col-sm-9 col-xs-11 forum-name" colspan="2">
+      <div class="col-md-8 col-sm-9 col-11 forum-name" colspan="2">
         <table class="forum-data-table">
           <tr>
             <td class="forum-icon link"><i class="fa fa-link fa-2x"></i></td>
@@ -199,7 +199,7 @@
     <div class="panel panel-default forumlist">
       <div class="panel-heading">
         <div class="row panel-row">
-          <div class="col-md-8 col-sm-9 col-xs-9 forum-name-col">
+          <div class="col-md-8 col-sm-9 col-9 forum-name-col">
             <h3 class="panel-title">{% trans "Forums" %}</h3>
           </div>
           <div class="col-md-1 hidden-sm hidden-xs forum-count-col">{% trans "Topics" %}</div>

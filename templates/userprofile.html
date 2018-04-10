@@ -46,7 +46,7 @@
                         <span class="badge badge-danger"><i class="fa fa-eye"></i> 245 Views</span> -->
                     </div>
                     <div class="col-md-12">
-                        <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
+                        <h5 class="mt-2"><span class="far fa-clock ion-clock float-right"></span> Recent Activity</h5>
                         <table class="table table-sm table-hover table-striped">
                             <tbody>
                                 {% for r in registration %}
@@ -63,36 +63,15 @@
                 <!--/row-->
             </div>
             <div class="tab-pane" id="teams">
-                <div class="alert alert-info alert-dismissable">
-                    <a class="panel-close close" data-dismiss="alert">×</a> This is an <strong>.alert</strong>. Use this to show important messages to the user.
-                </div>
                 <table class="table table-hover table-striped">
-                    <tbody>                                    
+                    <tbody>
+                        {% for t in teams %}
                         <tr>
                             <td>
-                                <span class="float-right font-weight-bold">3 hrs ago</span> Here is your a link to the latest summary report from the..
+                                Joined <strong><a href="{{ t.get_absolute_url }}">{{ t.name }}</a></strong>
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                <span class="float-right font-weight-bold">Yesterday</span> There has been a request on your account since that was..
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="float-right font-weight-bold">9/10</span> Porttitor vitae ultrices quis, dapibus id dolor. Morbi venenatis lacinia rhoncus. 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="float-right font-weight-bold">9/4</span> Vestibulum tincidunt ullamcorper eros eget luctus. 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="float-right font-weight-bold">9/4</span> Maxamillion ais the fix for tibulum tincidunt ullamcorper eros. 
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody> 
                 </table>
             </div>
@@ -188,12 +167,25 @@
         </div>
     </div>
     <div class="col-lg-4 order-lg-1 text-center">
-        <img src="/static/img/diego.jpg" width="300px" class="mx-auto img-fluid img-circle d-block" alt="avatar">
-        <h6 class="mt-2">Upload a different photo</h6>
-        <label class="custom-file">
-            <input type="file" id="file" class="custom-file-input">
-            <input type="button" class="btn btn-primary" value="Upload New Photo">
-        </label>
+        <img src="{{ profile.profile_pic.url }}" width="200px" class="mx-auto img-fluid img-circle d-block" alt="avatar">
+        {% if user.is_authenticated %}
+            {% if user.username == userdata.username %}
+            <div class="form-group text-left pddn-30-top col-10 mx-auto">
+                <form action="{% url 'uprofile:upload_pic' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <!-- <p>
+                        <input id="id_image" type="file" class="" name="image">
+                    </p>
+                    <input type="submit" value="Submit" /> -->
+                    
+                        <label for="id_image">Upload new picture</label>
+                        
+                        <input type="file" class="form-control-file pddn-10-btm" id="id_image" name=image>
+                        <input type="submit" class="btn btn-secondary btn-sm " value="Submit" disabled='disabled'  id="sub_btn">
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        {% endif %}
     </div>
 </div>
 
@@ -209,6 +201,16 @@ $(document).ready(function(){
     $('.nav-tabs a').on('shown.bs.tab', function (e) {
         window.location.hash = e.target.hash;
     })
+
+    $('#id_image').change(function() {
+        var empty = false;
+
+        if (empty) {
+            $('#sub_btn').attr('disabled', 'disabled');
+        } else {
+            $('#sub_btn').removeAttr('disabled');
+        }
+    });
 })
 </script>
 

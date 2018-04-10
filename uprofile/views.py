@@ -5,9 +5,11 @@ from django.utils.translation import ugettext_lazy as _
 import account.views
 from account.utils import default_redirect
 import datetime
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, View
 
-from .forms import SettingsForm
+from .forms import SettingsForm, ImageUploadForm
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.urls import reverse
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -16,6 +18,19 @@ from .models import UProfile
 from events.models import Team, EventRegistration, Event
 from django.db.models import Q
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class UploadPicture(LoginRequiredMixin, View):
+
+    def post(self, request):
+        if request.method == 'POST':
+            form = ImageUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                m, created = UProfile.objects.get_or_create(user=self.request.user)
+                m.profile_pic = form.cleaned_data['image']
+                m.save()
+                return HttpResponseRedirect('/users/admin')
+        return HttpResponseForbidden('Forbidden')
 
 class SettingsView(account.views.SettingsView):
     form_class = SettingsForm
@@ -47,8 +62,8 @@ class SettingsView(account.views.SettingsView):
             profile.birth_date = form.cleaned_data["birthdate"]
             profile.github_uname = form.cleaned_data["github"]
             profile.about = form.cleaned_data["about"]
+            
             profile.save()
-        super(SettingsView, self).update_account(form)
 
     def get_success_url(self, fallback_url=None, **kwargs):
         super(SettingsView, self).get_success_url()
@@ -72,6 +87,8 @@ class UProfileView(DetailView):
         user_from_slug = get_object_or_404(User, username = slug)
         context['userdata'] = user_from_slug
         context['registration'] = EventRegistration.objects.filter(member_id=user_from_slug.id)
+        context['teams'] = Team.objects.filter(members__in = [user_from_slug.id])
+        print(user_from_slug.id)
         return context
 
 class ProfileEventListView(ListView):
@@ -88,5 +105,8 @@ class ProfileEventListView(ListView):
 
     def get_context_data(self,**kwargs):
         context = super(ProfileEventListView, self).get_context_data(**kwargs)
-        context['userdata'] = get_object_or_404(User, username = self.kwargs['slug'])
+        slug = self.kwargs['slug']
+        user = get_object_or_404(User, username=slug)
+        context['userdata'] = user
+        context['teams'] = Team.objects.filter(member_id = user.id)
         return context

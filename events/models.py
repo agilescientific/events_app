@@ -22,6 +22,8 @@ class Event(models.Model):
     event_location = models.CharField(max_length=100)
     body_text = models.TextField(max_length=500, default="")
     event_class = models.ForeignKey(EventClass, on_delete=models.CASCADE)
+    forum = models.ForeignKey('forum.Forum', related_name='event_forum',
+                              on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.event_title

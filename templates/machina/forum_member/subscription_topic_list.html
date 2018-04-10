@@ -6,12 +6,12 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       <h1>{% trans "Topics that you are subscribed to" %}</h1>
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-6 col-md-4 forum-actions-block">
+    <div class="col-6 col-md-4 forum-actions-block">
       {% if paginator.count > 0 %}
       <p class="text-muted">
         {% blocktrans trimmed count counter=paginator.count %}
@@ -22,7 +22,7 @@
       </p>
       {% endif %}
     </div>
-      <div class="col-xs-12 col-md-8 pagination-block">
+      <div class="col-12 col-md-8 pagination-block">
         {% with "pagination-sm" as pagination_size %}
           {% include "partials/pagination.html" %}
         {% endwith %}
@@ -33,7 +33,7 @@
     {% include "forum_conversation/topic_list.html" %}
   {% endwith %}
   <div class="row">
-    <div class="col-xs-12 col-md-12 pagination-block">
+    <div class="col-12 col-md-12 pagination-block">
       {% with "pagination-sm" as pagination_size %}
         {% include "partials/pagination.html" %}
       {% endwith %}

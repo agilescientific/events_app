@@ -8,6 +8,7 @@ from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 class SettingsForm(account.forms.SettingsForm):
+
     field_order = ['firstname', 'lastname','email', 'about', 
                    'github', 'birthdate', 'timezone']
 
@@ -21,3 +22,6 @@ class SettingsForm(account.forms.SettingsForm):
     about = forms.CharField(widget=forms.Textarea, max_length=100)
     birthdate = forms.DateField(widget=forms.SelectDateWidget(years=range(1910, 2015)))
 
+class ImageUploadForm(forms.Form):
+    """Image upload form."""
+    image = forms.ImageField()

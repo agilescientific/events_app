@@ -17,13 +17,13 @@
   {% endif %}
 
   <!-- Sub "forms" tabs -->
-  <ul class="nav nav-tabs nav-justified">
-    <li class="active"><a href="#options" data-toggle="tab">{% trans "Options" %}</a></li>
+  <ul class="nav nav-tabs nav-justified" role='tablist'>
+    <li class="nav-item"><a class="nav-link active" href="#options" data-toggle="tab">{% trans "Options" %}</a></li>
     {% if poll_option_formset %}
-      <li><a href="#poll" data-toggle="tab">{% trans "Poll" %}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#poll" data-toggle="tab">{% trans "Poll" %}</a></li>
     {% endif %}
     {% if attachment_formset %}
-      <li><a href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
     {% endif %}
   </ul>
 

@@ -198,3 +198,10 @@ MACHINA_DEFAULT_AUTHENTICATED_USER_FORUM_PERMISSIONS = [
 ]
 
 MACHINA_FORUM_NAME = 'Agile* Events'
+
+MACHINA_BASE_TEMPLATE_NAME = 'base.html'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_PROFILE_MODULE = 'uprofile.UProfile'
