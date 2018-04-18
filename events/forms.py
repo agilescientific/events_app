@@ -31,12 +31,13 @@ class TeamForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ['name', 'github', 'detail_small']
-        labels = ['Name', 'URL to Github Repo', 'Description']
+        fields = ['name', 'github', 'detail_small', 'members']
+        labels = ['Name', 'URL to Github Repo', 'Description', 'Members']
 
     name = forms.CharField(label='Project Name')
     github = forms.URLField(label='URL to Github Repo')
     detail_small = forms.Textarea()
+    members = AutoCompleteSelectMultipleField('users')
 
     # Uni-form
     helper = FormHelper()
@@ -45,6 +46,7 @@ class ProjectForm(forms.ModelForm):
                             Field('name', css_class='input-xlarge'),
                             'github',
                             Field('detail_small'),
+                            'members',
                             FormActions(
                                 Submit('save_changes', 'Create', css_class="btn-primary"),
                                 Button('cancel', 'Cancel', onclick='history.go(-1);'),

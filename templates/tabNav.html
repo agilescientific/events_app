@@ -1,0 +1,18 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link {% if current == 'description' %}active{% endif %}" href="/event/{{ event.id }}">Description</a>
+    </li>
+    {% if event.event_class_id == 2 %}
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'projects' %}active{% endif %}" href="/event/{{ event.id }}/projects">Projects</a>
+    </li>
+    {% endif %}
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'participants' %}active{% endif %}" href="/event/{{ event.id }}/participants">Participants</a>
+    </li>
+    {% if event.forum %}
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'forum' %}active{% endif %}" href="/event/{{ event.id }}/forum">Forum</a>
+    </li>
+    {% endif %}
+</ul>

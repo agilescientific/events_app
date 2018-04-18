@@ -67,6 +67,7 @@ class Project(models.Model):
     creator = models.ForeignKey(User, related_name='projectCreator', on_delete=models.CASCADE)
     votes = models.BigIntegerField(default=0)
     github = models.URLField(verbose_name='URL to Github Repo')
+    members = models.ManyToManyField(User)
 
     def __str__(self):
         return self.name + " - " + self.event.event_title

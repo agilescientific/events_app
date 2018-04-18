@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'mptt',
     'haystack',
     'widget_tweaks',
+    'imagekit',
 ] + get_machina_apps()
 
 MIDDLEWARE = [
@@ -199,7 +200,7 @@ MACHINA_DEFAULT_AUTHENTICATED_USER_FORUM_PERMISSIONS = [
 
 MACHINA_FORUM_NAME = 'Agile* Events'
 
-MACHINA_BASE_TEMPLATE_NAME = 'base.html'
+MACHINA_BASE_TEMPLATE_NAME = 'bare.html'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

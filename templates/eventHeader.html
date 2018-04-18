@@ -1,0 +1,161 @@
+<style type="text/css">
+    #bg, #search-bg {
+      background-image: url('/static/img/SLC_img_only-wide.png');
+      background-repeat: no-repeat;
+      background-size: 1200px auto;
+    }
+  
+    #bgtext {
+      background-image: url('/static/img/SLC_skull_w_text.png');
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      display: block;
+      height: 400px;
+      color: white;
+    }
+  
+    #bgempty {
+      background-image: url('/static/img/SLC_img_only-wide.png');
+      background-repeat: no-repeat;
+      background-size: 1200px auto;
+      background-position: center center;
+      display: block;
+      height: 200px;
+    }
+    
+    #bg {
+      background-position: center center;
+      padding: 70px 90px 70px 90px;
+    }
+    
+    #search-container {
+      position: relative;
+    }
+    
+    #search-bg {
+      /* Absolutely position it, but stretch it to all four corners, then put it just behind #search's z-index */
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      z-index: 99;
+    
+      /* Pull the background 70px higher to the same place as #bg's */
+      background-position: center -70px;
+    
+      -webkit-filter: blur(10px);
+      /* filter: url('/media/blur.svg#blur'); */
+      filter: blur(10px);
+    }
+    
+    #search {
+      /* Put this on top of the blurred layer */
+      position: relative;
+      z-index: 100;
+      padding: 20px;
+      background: rgb(200,200,200); /* for IE */
+      background: rgba(200,255,255,0.25);
+    }
+    
+    @media (max-width: 600px ) {
+      #bg { padding: 10px; }
+      #search-bg { background-position: center -10px; }
+    }
+    
+    #search h1, #search h2, #search p { text-align: left; color: #FFF; font-weight: bold;}
+    #search h2 { margin-bottom: 50px }
+    #search h5 { margin-top: 70px }
+  
+    #event_head{
+      color: aliceblue;
+      padding: 40px 0px 10px 20px;
+      display: block;
+      height: 40px;
+    }
+  
+    #event_info h1{
+      color: aliceblue;
+      padding: 40px 0px 10px 20px;
+      display: block;
+      height: 40px;
+    }
+    #event_foot p{
+      color: aliceblue;
+      padding: 40px 0px 10px 20px;
+      display: block;
+      height: 40px;
+    }
+    .jumbotron-backtext {
+      background-image: url('/static/img/SLC_skull_w_text.png');
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      display: block;
+      height: 400px;
+      color: white;
+    }
+    .jumbotron-text{
+      /* filter: blur(1px);
+      -webkit-filter: blur(1px); */
+      background-image: url('/static/img/SLC_img_only-wide.png');
+      background-color: lightgray;
+      background-position: center center;
+      background-size: cover;
+      background-blend-mode: multiply;
+  
+      /* background: 
+      linear-gradient(purple 0%, red 90%), 
+      linear-gradient(to right, purple 0%, yellow 90%), 
+      url('/static/img/SLC_img_only-wide.png') 30px,
+      url('/static/img/SLC_img_only-wide.png') 20px;
+      background-blend-mode: screen, difference, lighten; */
+    }
+  
+</style>
+    
+    
+<!-- <div class="row">
+<div class="col-12 mx-auto pddn-30-top">
+    <div id="bg">
+    <div id="search-container">
+        <div id="search-bg"></div>
+        <div id="search">
+        <h1>{{ event.event_title }}</h1>
+        <h2>Church & State, Salt Lake City</h2>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+<section class="pddn-30-top pddn-30-btm">
+    
+    <div class="row">
+        <div id="bgtext" class="col-8">
+            
+        </div>
+        <div id="side-text" class="col-4">
+                <p>With some text</p>
+        </div>
+    </div>
+
+
+</section> -->
+
+
+<!-- Page Heading -->
+
+<section class="pddn-30-top">
+    <div class="jumbotron jumbotron-fluid jumbotron-text">
+        <div class="container text-white">
+        <h1>{{ event.event_title }}</h1>
+        <p>Sponsors: Earth Analytics - Enthough - Dell EMC</p>
+        </div>
+    </div>
+</section>
+
+<div class="row">
+<div class="col-12 mx-auto pddn-10-top">
+    {% include "tabNav.html" %}
+</div>
+</div>

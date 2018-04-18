@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-{% include "breadcrumbs.html" %}
+
+{% include "eventHeader.html" %}
 
 <!-- Page Heading -->
 <div class="row pddn-30-top pddn-20-bottom">
@@ -26,7 +27,7 @@
           <div class="col-md-8">
             <h5 class="mb-0">
               <button id="btn{{ forloop.counter }}" class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-                {{forloop.counter }} -{{ p.name }}
+                {{forloop.counter }} - {{ p.name }}
               </button>
             </h5>
           </div>
@@ -41,14 +42,21 @@
             <div class="col-md-12">
                 <div class="jumbotron">
                   <h2>
-                    Description
+                    Description 
+                    {% if user.is_authenticated %}
+                      {% if user.username|safe == p.creator|safe %}
+                        - <a href="/project/{{ p.id }}/edit"> Edit </a>
+                      {% endif %}
+                    {% endif %}
                   </h2>
                   <p>
                       {{ p.detail_long }}
                   </p>
+                  {% if p.main_url %}
                   <p>
                     <a class="btn btn-primary btn-large" href="{{ p.main_url }}">{{ p.main_url }}</a>
                   </p>
+                  {% endif %}
                 </div>
                 <dl>
                   <dt>

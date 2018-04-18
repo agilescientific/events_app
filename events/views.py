@@ -20,6 +20,17 @@ class IndexView(ListView):
     model = Event
     context_object_name = 'events'
 
+class ForumView(LoginRequiredMixin, DetailView):
+    template_name = "forum.html"
+    model = Event
+    context_object_name = 'event'
+
+    def get_context_data(self,**kwargs):
+        context = super(ForumView, self).get_context_data(**kwargs)
+        context['current'] = 'forum'
+
+        return context
+
 class EventDetailView(DetailView):
     template_name = "eventDetail.html"
     model = Event
@@ -34,6 +45,7 @@ class EventDetailView(DetailView):
         else:
             context['registered'] = False
 
+        context['current'] = 'description'
         return context
 
 class ParticipantListView(ListView):
@@ -50,7 +62,7 @@ class ParticipantListView(ListView):
     def get_context_data(self,**kwargs):
         context = super(ParticipantListView, self).get_context_data(**kwargs)
         context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
-
+        context['current'] = 'participants'
         return context
 
 class TeamListView(ListView):
@@ -111,7 +123,7 @@ class ProjectListView(ListView):
             context['registered'] = True
         else:
             context['registered'] = False
-
+        context['current'] = 'projects'
         return context
 
 class JoinEventView(LoginRequiredMixin, View):
@@ -170,6 +182,18 @@ class CreateProjectView(LoginRequiredMixin, FormView):
     form_class = ProjectForm
     success_url = '/'
 
+    def get_form(self, form_class=form_class):
+        """
+        Check if the user has already filled in the form.
+        If so, then show the form populated with those answers,
+        to let user change them.
+        """
+        try:
+            project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
+            return form_class(instance=project, **self.get_form_kwargs())
+        except Project.DoesNotExist:
+            return form_class(**self.get_form_kwargs())
+
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
@@ -185,6 +209,46 @@ class CreateProjectView(LoginRequiredMixin, FormView):
     def get_context_data(self,**kwargs):
         context = super(CreateProjectView, self).get_context_data(**kwargs)
         context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        context['creator'] = self.request.user
+        return context
+
+class ProjectEditView(LoginRequiredMixin, FormView):
+    template_name = 'projectEdit.html'
+    model = Project
+    form_class = ProjectForm
+    success_url = '/'
+
+    def get_form(self, form_class=form_class):
+        """
+        Check if the user has already filled in the form.
+        If so, then show the form populated with those answers,
+        to let user change them.
+        """
+        try:
+            project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
+            return form_class(instance=project, **self.get_form_kwargs())
+        except Project.DoesNotExist:
+            return form_class(**self.get_form_kwargs())
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        proj = Project.objects.get(id=self.kwargs['pk'])
+        event = Event.objects.get(id = proj.event_id)
+        self.object = form.save(commit=False)
+        self.object.creator = self.request.user
+        self.object.event = event
+        self.object.save()
+        form.save_m2m()
+        self.success_url = '/event/{}/projects'.format(event.id)
+        return super().form_valid(form)
+
+    def get_context_data(self,**kwargs):
+        context = super(ProjectEditView, self).get_context_data(**kwargs)
+        proj = Project.objects.get(id=self.kwargs['pk'])
+        events = Event.objects.filter(id = proj.event_id)
+        if (len(events)>0):
+            context['event'] = events[0]
         context['creator'] = self.request.user
         return context
 
