@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views import View
@@ -224,11 +224,13 @@ class ProjectEditView(LoginRequiredMixin, FormView):
         If so, then show the form populated with those answers,
         to let user change them.
         """
-        try:
-            project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
-            return form_class(instance=project, **self.get_form_kwargs())
-        except Project.DoesNotExist:
-            return form_class(**self.get_form_kwargs())
+        project = get_object_or_404(Project, creator=self.request.user, id=self.kwargs['pk'])
+        return form_class(instance=project, **self.get_form_kwargs())
+        # try:
+        #     project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
+        #     return form_class(instance=project, **self.get_form_kwargs())
+        # except Project.DoesNotExist:
+        #     return form_class(**self.get_form_kwargs())
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
