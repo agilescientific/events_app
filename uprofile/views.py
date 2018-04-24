@@ -15,7 +15,8 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from .models import UProfile
-from events.models import Team, EventRegistration, Event
+from events.models import Team, EventRegistration, Event, Project
+from itertools import chain
 from django.db.models import Q
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -61,6 +62,8 @@ class SettingsView(account.views.SettingsView):
             profile, created = UProfile.objects.get_or_create(user=self.request.user)
             profile.birth_date = form.cleaned_data["birthdate"]
             profile.github_uname = form.cleaned_data["github"]
+            profile.twitter_uname = form.cleaned_data["twitter"]
+            profile.linkedin_uname = form.cleaned_data["linkedin"]
             profile.about = form.cleaned_data["about"]
             
             profile.save()
@@ -87,8 +90,9 @@ class UProfileView(DetailView):
         user_from_slug = get_object_or_404(User, username = slug)
         context['userdata'] = user_from_slug
         context['registration'] = EventRegistration.objects.filter(member_id=user_from_slug.id)
-        context['teams'] = Team.objects.filter(members__in = [user_from_slug.id])
-        print(user_from_slug.id)
+        p_member = Project.objects.filter(Q(members__in = [user_from_slug.id]))
+        p_creator = Project.objects.filter(Q(creator = user_from_slug.id))
+        context['projects'] = list(chain(p_member, p_creator))
         return context
 
 class ProfileEventListView(ListView):

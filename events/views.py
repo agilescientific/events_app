@@ -13,6 +13,8 @@ from .models import Event, EventRegistration, Team, Project, EventClass
 from .forms import TeamForm, ProjectForm
 
 from urllib.parse import urlparse
+
+from markdownx.utils import markdownify
 # Create your views here.
 
 class IndexView(ListView):
@@ -38,14 +40,16 @@ class EventDetailView(DetailView):
 
     def get_context_data(self,**kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
+        pk = Event.objects.get(slug = self.kwargs['slug']).id
         q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
-                                                     event_id = self.kwargs['pk']))
+                                                     event_id = pk))
         if q_reg > 0:
             context['registered'] = True
         else:
             context['registered'] = False
 
         context['current'] = 'description'
+        context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).body_text)
         return context
 
 class ParticipantListView(ListView):
@@ -56,12 +60,13 @@ class ParticipantListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.participants = queryset.filter(event_id = self.kwargs['pk'])
+        pk = Event.objects.get(slug = self.kwargs['slug']).id
+        self.participants = queryset.filter(event_id = pk)
         return self.participants
 
     def get_context_data(self,**kwargs):
         context = super(ParticipantListView, self).get_context_data(**kwargs)
-        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        context['event'] = Event.objects.get(slug = self.kwargs['slug'])
         context['current'] = 'participants'
         return context
 
@@ -72,23 +77,24 @@ class TeamListView(ListView):
     context_object_name = 'teams'
 
     def render_to_response(self, context):
-        event_pk = self.kwargs['pk']
-        event_obj = Event.objects.get(id=event_pk)
+        event_obj = Event.objects.get(slug = self.kwargs['slug'])
         if str(event_obj.event_class) != 'hackathon':
-            return HttpResponseRedirect('/event/{}'.format(event_pk))
+            return HttpResponseRedirect('/event/{}'.format(self.kwargs['slug']))
 
         return super(TeamListView, self).render_to_response(context)
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.teams = queryset.filter(event_id = self.kwargs['pk'])
+        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
+        self.teams = queryset.filter(event_id = event_pk)
         return self.teams
 
     def get_context_data(self,**kwargs):
         context = super(TeamListView, self).get_context_data(**kwargs)
-        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
+        context['event'] = Event.objects.get(slug = self.kwargs['slug'])
         q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
-                                                     event_id = self.kwargs['pk']))
+                                                     event_id = event_pk))
         if q_reg > 0:
             context['registered'] = True
         else:
@@ -102,23 +108,25 @@ class ProjectListView(ListView):
     context_object_name = 'projects'
 
     def render_to_response(self, context):
-        event_pk = self.kwargs['pk']
+        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
         event_obj = Event.objects.get(id=event_pk)
         if str(event_obj.event_class) != 'projects':
-            return HttpResponseRedirect('/event/{}'.format(event_pk))
+            return HttpResponseRedirect('/event/{}'.format(event_obj.slug))
 
         return super(ProjectListView, self).render_to_response(context)
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.projects = queryset.filter(event_id = self.kwargs['pk'])
+        pk = Event.objects.get(slug = self.kwargs['slug']).id
+        self.projects = queryset.filter(event_id = pk)
         return self.projects
 
     def get_context_data(self,**kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
-        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        pk = Event.objects.get(slug = self.kwargs['slug']).id
+        context['event'] = Event.objects.get(id = pk)
         q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
-                                                     event_id = self.kwargs['pk']))
+                                                     event_id = pk))
         if q_reg > 0:
             context['registered'] = True
         else:
@@ -131,12 +139,12 @@ class JoinEventView(LoginRequiredMixin, View):
     model = Event
 
     def get(self, request, *args, **kwargs):
-        event_pk = self.kwargs['pk']
+        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
         obj, created = EventRegistration.objects.get_or_create(
                         event = Event.objects.get(id=event_pk),
                         member = User.objects.get(id=self.request.user.id),
                         )
-        return HttpResponseRedirect('/event/{}'.format(event_pk))
+        return HttpResponseRedirect('/event/{}'.format(self.kwargs['slug']))
 
 class CreateTeamView(FormView):
     template_name = 'teamRegistration.html'
@@ -151,7 +159,8 @@ class CreateTeamView(FormView):
         to let user change them.
         """
         try:
-            team = Team.objects.get(leader=self.request.user, event=self.kwargs['pk'])
+            pk = Event.objects.get(slug = self.kwargs['slug']).id
+            team = Team.objects.get(leader=self.request.user, event=pk)
             return form_class(instance=team, **self.get_form_kwargs())
         except Team.DoesNotExist:
             return form_class(**self.get_form_kwargs())
@@ -159,7 +168,7 @@ class CreateTeamView(FormView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        event_pk = self.kwargs['pk']
+        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
         self.object = form.save(commit=False)
         self.object.leader = self.request.user
         self.object.event = Event.objects.get(id=event_pk)
@@ -167,12 +176,12 @@ class CreateTeamView(FormView):
         form.save_m2m()
         self.object.members.add(self.request.user)
 
-        self.success_url = '/event/{}/teams'.format(event_pk)
+        self.success_url = '/event/{}/teams'.format(self.kwargs['slug'])
         return super().form_valid(form)
 
     def get_context_data(self,**kwargs):
         context = super(CreateTeamView, self).get_context_data(**kwargs)
-        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        context['event'] = Event.objects.get(slug = self.kwargs['slug'])
         context['creator'] = self.request.user
         return context
 
@@ -182,33 +191,21 @@ class CreateProjectView(LoginRequiredMixin, FormView):
     form_class = ProjectForm
     success_url = '/'
 
-    def get_form(self, form_class=form_class):
-        """
-        Check if the user has already filled in the form.
-        If so, then show the form populated with those answers,
-        to let user change them.
-        """
-        try:
-            project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
-            return form_class(instance=project, **self.get_form_kwargs())
-        except Project.DoesNotExist:
-            return form_class(**self.get_form_kwargs())
-
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        event_pk = self.kwargs['pk']
+        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
         self.object = form.save(commit=False)
         self.object.creator = self.request.user
         self.object.event = Event.objects.get(id=event_pk)
         self.object.save()
         form.save_m2m()
-        self.success_url = '/event/{}/projects'.format(event_pk)
+        self.success_url = '/event/{}/projects'.format(self.kwargs['slug'])
         return super().form_valid(form)
 
     def get_context_data(self,**kwargs):
         context = super(CreateProjectView, self).get_context_data(**kwargs)
-        context['event'] = Event.objects.filter(id = self.kwargs['pk'])[0]
+        context['event'] = Event.objects.get(slug = self.kwargs['slug'])
         context['creator'] = self.request.user
         return context
 
@@ -224,7 +221,7 @@ class ProjectEditView(LoginRequiredMixin, FormView):
         If so, then show the form populated with those answers,
         to let user change them.
         """
-        project = get_object_or_404(Project, creator=self.request.user, id=self.kwargs['pk'])
+        project = get_object_or_404(Project, creator=self.request.user, slug=self.kwargs['slug'])
         return form_class(instance=project, **self.get_form_kwargs())
         # try:
         #     project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
@@ -235,19 +232,19 @@ class ProjectEditView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        proj = Project.objects.get(id=self.kwargs['pk'])
+        proj = Project.objects.get(slug=self.kwargs['slug'])
         event = Event.objects.get(id = proj.event_id)
         self.object = form.save(commit=False)
         self.object.creator = self.request.user
         self.object.event = event
         self.object.save()
         form.save_m2m()
-        self.success_url = '/event/{}/projects'.format(event.id)
+        self.success_url = '/event/{}/projects'.format(event.slug)
         return super().form_valid(form)
 
     def get_context_data(self,**kwargs):
         context = super(ProjectEditView, self).get_context_data(**kwargs)
-        proj = Project.objects.get(id=self.kwargs['pk'])
+        proj = Project.objects.get(slug=self.kwargs['slug'])
         events = Event.objects.filter(id = proj.event_id)
         if (len(events)>0):
             context['event'] = events[0]

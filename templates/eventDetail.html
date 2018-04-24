@@ -5,38 +5,40 @@
 
 {% include "eventHeader.html" %}
 
-<div class="row pddn-30-top pddn-20-bottom">
-  <div class="col-md-8">
-    <h1 class="head-pad">
-      {{ event.event_title }}
-    </h1>
+<div class="col-10 mx-auto">
+  <div class="row pddn-30-top pddn-20-bottom">
+    <div class="col-md-10">
+      <h1 class="head-pad">
+        {{ event.event_title }}
+      </h1>
+    </div>
+    <div class="col-md-2 head-right">
+      {% if registered == False %}
+        <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#joinModalCenter">
+            Join
+        </button>
+      {% endif %}
+    </div>
   </div>
-  <div class="col-md-4 head-right">
-    {% if registered == False %}
-      <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#joinModalCenter">
-          Join
-      </button>
-    {% endif %}
-  </div>
-</div>
 
-<!-- Project -->
-<div class="row pddn-30-top">
-    <div class="col-md-8">
-      <!-- <img class="img-fluid rounded mb-3 mb-md-0" src="{{ event.img_url|safe }}" alt=""> -->
-      <p>{{ event.description_text|safe }}</p>
-    </div>
-    <div class="col-md-4">
-      <h4>Date:</h4>
-      <h5><small>{{ event.event_date }} - Time: {{ event.event_time }}</small></h5>
-      <h4>Location:</h4>
-      <h5><small>Church & State</small></h5>
-      <h5><small>370 300 E</small></h5>
-      <h5><small>Salt Lake City, UT 84111</small></h5>
-      <h5><small>USA</small></h5>
-    </div>
+  <!-- Project -->
+  <div class="row pddn-30-top">
+      <div class="col-md-8">
+        <!-- <img class="img-fluid rounded mb-3 mb-md-0" src="{{ event.img_url|safe }}" alt=""> -->
+        <p>{{ html_body|safe }}</p>
+      </div>
+      <div class="col-md-4">
+        <h4>Date:</h4>
+        <h5><small>{{ event.event_startdate|date:'D, N d, Y. P' }} - {{ event.event_enddate|date:'D, N d, Y. P' }}</small></h5>
+        <h4>Location:</h4>
+        <h5><small>Church & State</small></h5>
+        <h5><small>370 300 E</small></h5>
+        <h5><small>Salt Lake City, UT 84111</small></h5>
+        <h5><small>USA</small></h5>
+      </div>
+  </div>
+  <!-- /.row -->
 </div>
-<!-- /.row -->
 
 <div class="pddn-100-top"></div>
 
@@ -56,7 +58,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-success" href="{{ event.id }}/join">Accept</a>
+        <a class="btn btn-success" href="{{ event.slug }}/join">Accept</a>
       </div>
     </div>
   </div>

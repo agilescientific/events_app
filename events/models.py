@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.utils.text import slugify
 from django.urls import reverse
+from markdownx.models import MarkdownxField
 User = get_user_model()
 
 class EventClass(models.Model):
@@ -17,13 +19,19 @@ class Event(models.Model):
     event_title = models.CharField(max_length=100)
     description_text = models.TextField(max_length=300)
     img_url = models.CharField(max_length=200, default="http://placehold.it/700x300")
-    event_date = models.DateField('event date')
-    event_time = models.CharField(max_length=50)
-    event_location = models.CharField(max_length=100)
-    body_text = models.TextField(max_length=500, default="")
+    event_startdate = models.DateTimeField('event start', null=True)
+    event_enddate = models.DateTimeField('event end', null=True)
+    event_location_name = models.CharField(max_length=100, null=True)
+    event_location_address = models.CharField(max_length=100, null=True)
+    event_location_city = models.CharField(max_length=100, null=True)
+    event_location_country = models.CharField(max_length=100, null=True)
+
+    body_text = MarkdownxField(max_length=2000, default="")
     event_class = models.ForeignKey(EventClass, on_delete=models.CASCADE)
     forum = models.ForeignKey('forum.Forum', related_name='event_forum',
                               on_delete=models.CASCADE, blank=True, null=True)
+
+    slug = models.SlugField(max_length=140, null=True)
 
     def __str__(self):
         return self.event_title
@@ -32,7 +40,21 @@ class Event(models.Model):
         """
         Returns the url to access a detail record for this event.
         """
-        return reverse('event-detail', args=[str(self.id)])
+        return reverse('event-detail', args=[self.slug])
+
+    def _get_unique_slug(self):
+        slug = slugify(self.title)
+        unique_slug = slug
+        num = 1
+        while Event.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
+ 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super().save()
 
 class EventRegistration(models.Model):
     event = models.ForeignKey(Event, related_name='event_info', on_delete=models.CASCADE)
@@ -68,6 +90,7 @@ class Project(models.Model):
     votes = models.BigIntegerField(default=0)
     github = models.URLField(verbose_name='URL to Github Repo')
     members = models.ManyToManyField(User)
+    slug = models.SlugField(max_length=140, null=True)
 
     def __str__(self):
         return self.name + " - " + self.event.event_title
@@ -76,4 +99,18 @@ class Project(models.Model):
         """
         Returns the url to access a particular team instance.
         """
-        return reverse('project-detail', args=[str(self.id)])
+        return reverse('project-detail', args=[str(self.slug)])
+
+    def _get_unique_slug(self):
+        slug = slugify(self.name)
+        unique_slug = slug
+        num = 1
+        while Project.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
+ 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super().save()

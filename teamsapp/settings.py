@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'haystack',
     'widget_tweaks',
     'imagekit',
+    'markdownx',
 ] + get_machina_apps()
 
 MIDDLEWARE = [
