@@ -31,10 +31,12 @@
         <h4>Date:</h4>
         <h5><small>{{ event.event_startdate|date:'D, N d, Y. P' }} - {{ event.event_enddate|date:'D, N d, Y. P' }}</small></h5>
         <h4>Location:</h4>
-        <h5><small>Church & State</small></h5>
-        <h5><small>370 300 E</small></h5>
-        <h5><small>Salt Lake City, UT 84111</small></h5>
-        <h5><small>USA</small></h5>
+        <a href="http://maps.google.com/?q={{event.event_location_address}}%20{{event.event_location_city}}%20{{event.event_location_country}}" target="_blank">
+          <h5><small>{{event.event_location_name}}</small></h5>
+          <h5><small>{{event.event_location_address}}</small></h5>
+          <h5><small>{{event.event_location_city}}</small></h5>
+          <h5><small>{{event.event_location_country}}</small></h5>
+        </a>
       </div>
   </div>
   <!-- /.row -->
