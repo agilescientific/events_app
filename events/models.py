@@ -4,7 +4,14 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.urls import reverse
 from markdownx.models import MarkdownxField
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
+
 User = get_user_model()
+
+def logo_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/org<slug>/<filename>
+    return '{0}/{1}'.format(instance.slug, filename)
 
 class EventClass(models.Model):
     e_class = models.CharField(max_length=100)
@@ -14,6 +21,46 @@ class EventClass(models.Model):
     
     class Meta:
         verbose_name_plural = "Event Classes"
+
+class Organization(models.Model):
+    name = models.CharField(max_length=100)
+    members = models.ManyToManyField(User, blank=True)
+    leader = models.ForeignKey(User, related_name='organizationleader', on_delete=models.CASCADE)
+    logo_url = models.CharField(max_length=200, null=True)
+    logo_inline_url = models.CharField(max_length=200, null=True)
+    website = models.URLField(verbose_name='Website URL')
+    linkedin_uname = models.CharField(max_length=50, null=True, blank=True)
+
+    org_logo = models.ImageField(upload_to=logo_directory_path,  null=True, blank=True,
+                                    default='default/blank-profile.png')
+    org_logo_thumbnail = ImageSpecField(source='org_logo',
+                                      format='JPEG',
+                                      options={'quality': 90})
+
+    slug = models.SlugField(max_length=140, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        """
+        Returns the url to access a particular team instance.
+        """
+        return reverse('organization-detail', args=[str(self.slug)])
+
+    def _get_unique_slug(self):
+        slug = slugify(self.name)
+        unique_slug = slug
+        num = 1
+        while Organization.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
+ 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super().save()
 
 class Event(models.Model):
     event_title = models.CharField(max_length=100)
@@ -30,6 +77,8 @@ class Event(models.Model):
     event_class = models.ForeignKey(EventClass, on_delete=models.CASCADE)
     forum = models.ForeignKey('forum.Forum', related_name='event_forum',
                               on_delete=models.CASCADE, blank=True, null=True)
+
+    sponsors = models.ManyToManyField(Organization)
 
     slug = models.SlugField(max_length=140, null=True)
 
@@ -63,22 +112,6 @@ class EventRegistration(models.Model):
 
     def __str__(self):
         return self.member.username + " - " + self.event.event_title
-
-
-class Team(models.Model):
-    name = models.CharField(max_length=100)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    members = models.ManyToManyField(User)
-    leader = models.ForeignKey(User, related_name='teamleader', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name + " - " + self.event.event_title
-
-    def get_absolute_url(self):
-        """
-        Returns the url to access a particular team instance.
-        """
-        return reverse('team-detail', args=[str(self.id)])
 
 class Project(models.Model):
     name = models.CharField(max_length=100)

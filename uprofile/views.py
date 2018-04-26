@@ -15,7 +15,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from .models import UProfile
-from events.models import Team, EventRegistration, Event, Project
+from events.models import Organization, EventRegistration, Event, Project
 from itertools import chain
 from django.db.models import Q
 
@@ -23,15 +23,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 class UploadPicture(LoginRequiredMixin, View):
 
-    def post(self, request):
+    def post(self, request, slug):
         if request.method == 'POST':
             form = ImageUploadForm(request.POST, request.FILES)
             if form.is_valid():
-                m, created = UProfile.objects.get_or_create(user=self.request.user)
+                m = UProfile.objects.get(user=self.request.user)
                 m.profile_pic = form.cleaned_data['image']
                 m.save()
-                return HttpResponseRedirect('/users/admin')
-        return HttpResponseForbidden('Forbidden')
+                return HttpResponseRedirect('/users/{}'.format(slug))
+        return HttpResponseRedirect('/users/{}'.format(slug))
 
 class SettingsView(account.views.SettingsView):
     form_class = SettingsForm
@@ -112,5 +112,5 @@ class ProfileEventListView(ListView):
         slug = self.kwargs['slug']
         user = get_object_or_404(User, username=slug)
         context['userdata'] = user
-        context['teams'] = Team.objects.filter(member_id = user.id)
+        context['teams'] = Organization.objects.filter(member_id = user.id)
         return context

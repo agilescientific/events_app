@@ -2,19 +2,20 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views import View
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
-
+from django.conf import settings
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .models import Event, EventRegistration, Team, Project, EventClass
-from .forms import TeamForm, ProjectForm
+from .models import Event, EventRegistration, Organization, Project, EventClass
+from .forms import OrganizationForm, ProjectForm, ImageUploadForm
 
 from urllib.parse import urlparse
 
 from markdownx.utils import markdownify
+import requests
 # Create your views here.
 
 class IndexView(ListView):
@@ -61,7 +62,7 @@ class ParticipantListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         pk = Event.objects.get(slug = self.kwargs['slug']).id
-        self.participants = queryset.filter(event_id = pk)
+        self.participants = queryset.filter(event_id = pk).exclude(member_id=1)
         return self.participants
 
     def get_context_data(self,**kwargs):
@@ -70,10 +71,10 @@ class ParticipantListView(ListView):
         context['current'] = 'participants'
         return context
 
-class TeamListView(ListView):
-    template_name = "teamList.html"
+class OrganizationListView(ListView):
+    template_name = "organizationList.html"
     # model = EventRegistration
-    queryset = Team.objects
+    queryset = Organization.objects
     context_object_name = 'teams'
 
     def render_to_response(self, context):
@@ -81,7 +82,7 @@ class TeamListView(ListView):
         if str(event_obj.event_class) != 'hackathon':
             return HttpResponseRedirect('/event/{}'.format(self.kwargs['slug']))
 
-        return super(TeamListView, self).render_to_response(context)
+        return super(OrganizationListView, self).render_to_response(context)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -90,7 +91,7 @@ class TeamListView(ListView):
         return self.teams
 
     def get_context_data(self,**kwargs):
-        context = super(TeamListView, self).get_context_data(**kwargs)
+        context = super(OrganizationListView, self).get_context_data(**kwargs)
         event_pk = Event.objects.get(slug = self.kwargs['slug']).id
         context['event'] = Event.objects.get(slug = self.kwargs['slug'])
         q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
@@ -146,10 +147,10 @@ class JoinEventView(LoginRequiredMixin, View):
                         )
         return HttpResponseRedirect('/event/{}'.format(self.kwargs['slug']))
 
-class CreateTeamView(FormView):
-    template_name = 'teamRegistration.html'
-    model = Team
-    form_class = TeamForm
+class CreateOrganizationView(FormView):
+    template_name = 'organizationRegistration.html'
+    model = Organization
+    form_class = OrganizationForm
     success_url = '/'
 
     def get_form(self, form_class=form_class):
@@ -160,9 +161,9 @@ class CreateTeamView(FormView):
         """
         try:
             pk = Event.objects.get(slug = self.kwargs['slug']).id
-            team = Team.objects.get(leader=self.request.user, event=pk)
+            organization = Organization.objects.get(leader=self.request.user)
             return form_class(instance=team, **self.get_form_kwargs())
-        except Team.DoesNotExist:
+        except Organization.DoesNotExist:
             return form_class(**self.get_form_kwargs())
 
     def form_valid(self, form):
@@ -176,14 +177,30 @@ class CreateTeamView(FormView):
         form.save_m2m()
         self.object.members.add(self.request.user)
 
-        self.success_url = '/event/{}/teams'.format(self.kwargs['slug'])
+        self.success_url = '/organization/{}'.format(self.kwargs['slug'])
         return super().form_valid(form)
 
     def get_context_data(self,**kwargs):
-        context = super(CreateTeamView, self).get_context_data(**kwargs)
+        context = super(CreateOrganizationView, self).get_context_data(**kwargs)
         context['event'] = Event.objects.get(slug = self.kwargs['slug'])
         context['creator'] = self.request.user
         return context
+
+def notify_slack(m, l=None):
+    """
+    Setup webhook for Slack
+    """
+    if l != None:
+        link = "<{}|Click here> for details".format(l)
+        message = "{} {}".format(m, link)
+    else:
+        message = m
+
+    payload = {'text':message}
+    r = requests.post(settings.SLACK_WEBHOOK, json=payload)
+    print(r.text)
+    
+    return
 
 class CreateProjectView(LoginRequiredMixin, FormView):
     template_name = 'projectRegistration.html'
@@ -201,6 +218,12 @@ class CreateProjectView(LoginRequiredMixin, FormView):
         self.object.save()
         form.save_m2m()
         self.success_url = '/event/{}/projects'.format(self.kwargs['slug'])
+
+        # Slack notify:
+        message = "Project {} was created.".format(self.object.name)
+        link = settings.SITE_URL + "/project/{}".format(self.object.slug)
+        notify_slack(message, link)
+        
         return super().form_valid(form)
 
     def get_context_data(self,**kwargs):
@@ -251,14 +274,13 @@ class ProjectEditView(LoginRequiredMixin, FormView):
         context['creator'] = self.request.user
         return context
 
-class TeamDetailView(DetailView):
-    template_name = "teamDetail.html"
-    model = Team
+class OrganizationDetailView(DetailView):
+    template_name = "organizationDetail.html"
+    model = Organization
     context_object_name = 'team'
 
     def get_context_data(self,**kwargs):
-        context = super(TeamDetailView, self).get_context_data(**kwargs)
-        context['event'] = Event.objects.get(id = context['team'].event.id)
+        context = super(OrganizationDetailView, self).get_context_data(**kwargs)
 
         return context
 
@@ -272,3 +294,15 @@ class ProjectDetailView(DetailView):
         context['event'] = Event.objects.get(id = context['project'].event.id)
 
         return context
+
+class UploadPicture(LoginRequiredMixin, View):
+
+    def post(self, request, slug):
+        if request.method == 'POST':
+            form = ImageUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                m = Organization.objects.get(slug=slug)
+                m.org_logo = form.cleaned_data['image']
+                m.save()
+                return HttpResponseRedirect('/organization/{}'.format(slug))
+        return HttpResponseRedirect('/organization/{}'.format(slug))

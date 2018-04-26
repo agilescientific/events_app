@@ -6,6 +6,5 @@ from .models import UProfile
 
 @receiver(post_save, sender=User)
 def handle_user_save(sender, instance, created, **kwargs):
-    print('Signal!')
     if created:
         UProfile.objects.create(user=instance)

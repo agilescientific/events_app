@@ -35,11 +35,7 @@ ALLOWED_HOSTS = ['agile-events.doesntexist.com', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'uprofile',
-    'account',
-    'bootstrap4',
     'django_extensions',
-    'events.apps.EventsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'events',
+    'uprofile',
+    'account',
+    'bootstrap4',
     'crispy_forms',
     'ajax_select',
     # Machina related apps:
@@ -207,3 +207,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_PROFILE_MODULE = 'uprofile.UProfile'
+
+SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
+SITE_URL = 'http://localhost:8000'
