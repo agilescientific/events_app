@@ -211,16 +211,19 @@ class CreateProjectView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
+        self.success_url = '/event/{}/projects'.format(self.kwargs['slug'])
+        if 'cancel' in self.request.POST:
+            return HttpResponseRedirect(self.get_success_url())
+
         event_pk = Event.objects.get(slug = self.kwargs['slug']).id
         self.object = form.save(commit=False)
         self.object.creator = self.request.user
         self.object.event = Event.objects.get(id=event_pk)
         self.object.save()
         form.save_m2m()
-        self.success_url = '/event/{}/projects'.format(self.kwargs['slug'])
 
         # Slack notify:
-        message = "Project {} was created.".format(self.object.name)
+        message = "Project *{}* was created.".format(self.object.name)
         link = settings.SITE_URL + "/project/{}".format(self.object.slug)
         notify_slack(message, link)
         
@@ -237,6 +240,7 @@ class ProjectEditView(LoginRequiredMixin, FormView):
     model = Project
     form_class = ProjectForm
     success_url = '/'
+    context_object_name = 'project'
 
     def get_form(self, form_class=form_class):
         """
@@ -262,7 +266,7 @@ class ProjectEditView(LoginRequiredMixin, FormView):
         self.object.event = event
         self.object.save()
         form.save_m2m()
-        self.success_url = '/event/{}/projects'.format(event.slug)
+        self.success_url = '/project/{}'.format(self.kwargs['slug'])
         return super().form_valid(form)
 
     def get_context_data(self,**kwargs):
@@ -272,6 +276,36 @@ class ProjectEditView(LoginRequiredMixin, FormView):
         if (len(events)>0):
             context['event'] = events[0]
         context['creator'] = self.request.user
+        context['pslug'] = self.kwargs['slug']
+        return context
+
+class ProjectDeleteView(DeleteView):
+    """
+    Sub-class the DeleteView to restrict a User from deleting other 
+    user's data.
+    """
+    template_name = 'projectDelete.html'
+    model = Project
+    success_message = "Deleted Successfully"
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(ProjectDeleteView, self).get_object()
+        if not obj.creator == self.request.user:
+            raise Http404
+        return obj
+
+    def get_success_url(self):
+        eslug = Event.objects.get(id = self.object.event_id).slug
+        return reverse('event-projects', kwargs={'slug':eslug})
+
+    def get_context_data(self,**kwargs):
+        context = super(ProjectDeleteView, self).get_context_data(**kwargs)
+        proj = Project.objects.get(slug=self.kwargs['slug'])
+        event = Event.objects.get(id = proj.event_id)
+        context['event'] = event
+        eslug = event.slug
+        context['eslug'] = self.kwargs['slug']
         return context
 
 class OrganizationDetailView(DetailView):
@@ -292,6 +326,7 @@ class ProjectDetailView(DetailView):
     def get_context_data(self,**kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['event'] = Event.objects.get(id = context['project'].event.id)
+        context['html_body'] = markdownify(self.object.detail_long)
 
         return context
 

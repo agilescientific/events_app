@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'imagekit',
     'markdownx',
+    "taggit",
 ] + get_machina_apps()
 
 MIDDLEWARE = [

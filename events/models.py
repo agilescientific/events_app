@@ -6,6 +6,7 @@ from django.urls import reverse
 from markdownx.models import MarkdownxField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from taggit.managers import TaggableManager
 
 User = get_user_model()
 
@@ -26,8 +27,6 @@ class Organization(models.Model):
     name = models.CharField(max_length=100)
     members = models.ManyToManyField(User, blank=True)
     leader = models.ForeignKey(User, related_name='organizationleader', on_delete=models.CASCADE)
-    logo_url = models.CharField(max_length=200, null=True)
-    logo_inline_url = models.CharField(max_length=200, null=True)
     website = models.URLField(verbose_name='Website URL')
     linkedin_uname = models.CharField(max_length=50, null=True, blank=True)
 
@@ -78,7 +77,10 @@ class Event(models.Model):
     forum = models.ForeignKey('forum.Forum', related_name='event_forum',
                               on_delete=models.CASCADE, blank=True, null=True)
 
-    sponsors = models.ManyToManyField(Organization)
+    sponsors = models.ManyToManyField(Organization, blank=True)
+
+    banner_img = models.ImageField(upload_to=logo_directory_path,  null=True, blank=True,
+                                    default='http://placehold.it/1000x300')
 
     slug = models.SlugField(max_length=140, null=True)
 
@@ -115,15 +117,17 @@ class EventRegistration(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=100)
-    detail_small = models.TextField(max_length=500, default="", verbose_name='Description')
-    detail_long = models.TextField(max_length=1000, default="", verbose_name='Long Description')
-    main_url = models.CharField(max_length=100, default='')
+    detail_small = models.TextField(max_length=200, default="", verbose_name='Description')
+    detail_long = MarkdownxField(max_length=2000, default="", verbose_name='Long Description')
+    # detail_long = models.TextField(max_length=1000, default="", verbose_name='Long Description')
+    main_url = models.CharField(max_length=100, default='', null=True, blank=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     creator = models.ForeignKey(User, related_name='projectCreator', on_delete=models.CASCADE)
     votes = models.BigIntegerField(default=0)
-    github = models.URLField(verbose_name='URL to Github Repo')
+    github = models.URLField(verbose_name='URL to Github Repo', null=True, blank=True)
     members = models.ManyToManyField(User)
     slug = models.SlugField(max_length=140, null=True)
+    resources = TaggableManager(verbose_name='Resources', blank=True)
 
     def __str__(self):
         return self.name + " - " + self.event.event_title

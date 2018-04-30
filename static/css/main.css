@@ -265,3 +265,7 @@ Margins
  
 html[xmlns] .clearfix { display: block; }
 * html .clearfix { height: 1%; }
+
+.markdownx-preview {
+  background-color: #eaeaea;
+}
