@@ -1,0 +1,7 @@
+.jumbotron-text {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rgba(10, 36, 54, 0.9); /* THIS IS WHAT EVER OVERLAY COLOUR YOU WANT */
+}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="row my-2 pddn-30-top">
+    <div class="col-lg-8 order-lg-2">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a href="#profile" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content py-4">
+            <div class="tab-pane active" id="profile">
+                <h5 class="mb-3">
+                    {{ team.name }}
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>About</strong>
+                        <p>
+                            {{ team.about }}
+                        </p>
+                        {% if team.linkedin_uname %}
+                        <i class="fab fa-linkedin"></i> <a href='https://www.linkedin.com/in/{{ team.linkedin_uname }}/'>{{ team.linkedin_uname }}</a> &nbsp;
+                        {% endif %}
+                        {% if team.website %}
+                        <i class="fa fa-globe"></i> <a href='{{ team.website }}/'>Website</a> &nbsp;
+                        {% endif %}
+                    </div>
+                    <!-- Badges -->
+                    <!-- <div class="col-md-6">
+                        <h6>Badges</h6>
+                        <a href="#" class="badge badge-dark badge-pill">Machine Learning</a>
+                        <a href="#" class="badge badge-dark badge-pill">Python</a>
+                        <a href="#" class="badge badge-dark badge-pill">html</a>
+                        <a href="#" class="badge badge-dark badge-pill">jquery</a>
+                        <a href="#" class="badge badge-dark badge-pill">bootstrap</a>
+                        <hr>
+                    </div> -->
+
+                </div>
+                <!--/row-->
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 order-lg-1 text-center align-middle" style="min-height: 200px;">
+        <img src="{{ team.org_logo_thumbnail.url }}" width="200px" class="mx-auto img-fluid img-circle d-block" alt="avatar">
+        {% if user.is_authenticated %}
+            {% if user.username == 'admin' %}
+            <div class="form-group text-left pddn-30-top col-10 mx-auto">
+                <form action="{% url 'upload_pic' slug=team.slug %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <!-- <p>
+                        <input id="id_image" type="file" class="" name="image">
+                    </p>
+                    <input type="submit" value="Submit" /> -->
+                    
+                        <label for="id_image">Upload new picture</label>
+                        
+                        <input type="file" class="form-control-file pddn-10-btm" id="id_image" name=image>
+                        <input type="submit" class="btn btn-secondary btn-sm " value="Submit" id="sub_btn">
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+
+
+{% endblock %}

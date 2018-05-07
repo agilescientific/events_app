@@ -6,4 +6,8 @@
         <a class="breadcrumb-item" href="/event/{{ event.id }}/teams">Teams</a>
     {% endif %}
     <a class="breadcrumb-item" href="/event/{{ event.id }}/participants">Participants</a>
+    {% if event.forum %}
+    <!-- <a class="breadcrumb-item" href="/event_forums/forum/{{ event.forum.slug }}-{{ event.forum.id }}">Forum</a> -->
+    <a class="breadcrumb-item" href="/event/{{ event.id }}/forum">Forum</a>
+    {% endif %}
 </nav>

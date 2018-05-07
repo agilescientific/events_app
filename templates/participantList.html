@@ -1,35 +1,45 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-{% include "breadcrumbs.html" %}
 
-<div class="row">
-  <!-- Page Heading -->
-  <h3 class="my-4 pddn-30-top pddn-20-bottom"> {{ event.event_title }} - Participants</h3>
-</div>
+{% include "eventHeader.html" %}
 
-<div class="row">
-  <div class="col-md-8 mx-auto">
-    <table class="table">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Username</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in participants %}
-          <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ p.member.first_name }} {{ p.member.last_name }}</td>
-            <td><a href="/users/{{ p.member.username }}"> {{ p.member.username }} </a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-    </table>
+<div class="col-md-10 mx-auto">
+  <div class="row">
+    <!-- Page Heading -->
+    <h3 class="my-4 pddn-30-top pddn-20-bottom"> Participant List</h3>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12">
+  
+      <div class="card-columns pddn-30-top">
+      {% for p in participants %}
+        <a href="/users/{{ p.member.username }}">
+          <div class="card">
+            <div class="row ">
+              <div class="col-4">
+                  <img src="{{ p.member.uprofile.avatar_thumbnail.url }}" class="w-100">
+              </div>
+              <div class="col-8">
+                <div class="card-block ">
+                  {% if p.member.first_name %}
+                  <p class="card-title pddn-10-top align-middle">{{ p.member.first_name }} {{ p.member.last_name }}</p>
+                  {% else %}
+                  <p class="card-title pddn-10-top align-middle">{{ p.member.username }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+        
+        </div>
+    </div>
   </div>
 </div>
+
 
 
 <div class="pddn-100-top"></div>

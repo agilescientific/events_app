@@ -1,0 +1,20 @@
+{% extends 'base.html' %} {% load staticfiles %} {% block content %}
+
+{% include "eventHeader.html" %}
+
+<!-- Page Content -->
+<div class="container">
+
+  <div class="row">
+    <div class="col-12">
+      <div class="embed-responsive embed-responsive-16by9">
+          <iframe src="/event_forums/forum/{{ event.forum.slug }}-{{ event.forum.id }}" frameborder="0" class="embed-responsive-item"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="pddn-100-top"></div>
+
+</div>
+<!-- /.container -->
+{% endblock %}

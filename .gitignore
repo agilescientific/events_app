@@ -104,3 +104,5 @@ ENV/
 /.vscode
 
 *.sqlite3
+
+/static_files

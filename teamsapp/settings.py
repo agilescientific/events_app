@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from machina import get_apps as get_machina_apps
+from machina import MACHINA_MAIN_TEMPLATE_DIR
+from machina import MACHINA_MAIN_STATIC_DIR
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,11 +35,7 @@ ALLOWED_HOSTS = ['agile-events.doesntexist.com', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'uprofile',
-    'account',
-    'bootstrap4',
     'django_extensions',
-    'events.apps.EventsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,9 +43,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'events',
+    'uprofile',
+    'account',
+    'bootstrap4',
     'crispy_forms',
     'ajax_select',
-]
+    # Machina related apps:
+    'mptt',
+    'haystack',
+    'widget_tweaks',
+    'imagekit',
+    'markdownx',
+    "taggit",
+] + get_machina_apps()
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'account.middleware.LocaleMiddleware',
     'account.middleware.TimezoneMiddleware',
+    'machina.apps.forum_permission.middleware.ForumPermissionMiddleware',
 ]
 
 ROOT_URLCONF = 'teamsapp.urls'
@@ -65,7 +76,10 @@ ROOT_URLCONF = 'teamsapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR],
+        'DIRS': [
+            TEMPLATE_DIR, 
+            TEMPLATE_DIR+'/machina',
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,6 +88,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'machina.core.context_processors.metadata',
             ],
         },
     },
@@ -130,7 +145,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static'),
+    MACHINA_MAIN_STATIC_DIR,
+    ]
 STATIC_ROOT = os.path.join(BASE_DIR,'static_files')
 
 SITE_ID = 1
@@ -153,3 +171,43 @@ ACCOUNT_EMAIL_CONFIRMATION_EMAIL = True
 APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+    'machina_attachments': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp',
+    },
+}
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}
+
+MACHINA_DEFAULT_AUTHENTICATED_USER_FORUM_PERMISSIONS = [
+    'can_see_forum',
+    'can_read_forum',
+    'can_start_new_topics',
+    'can_reply_to_topics',
+    'can_edit_own_posts',
+    'can_post_without_approval',
+    'can_create_polls',
+    'can_vote_in_polls',
+    'can_download_file',
+]
+
+MACHINA_FORUM_NAME = 'Agile* Events'
+
+MACHINA_BASE_TEMPLATE_NAME = 'bare.html'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_PROFILE_MODULE = 'uprofile.UProfile'
+
+SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
+SITE_URL = 'http://localhost:8000'

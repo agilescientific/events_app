@@ -1,227 +1,159 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-{% include "breadcrumbs.html" %}
 
-<!-- Page Heading -->
-<div class="row pddn-30-top pddn-20-bottom">
-  <div class="col-md-8">
-    <h3 class="head-pad">
-        {{ event.event_title }} - Projects
-    </h3>
+{% include "eventHeader.html" %}
+
+<div class="col-10 mx-auto">
+  <!-- Page Heading -->
+  <div class="row pddn-30-top pddn-20-bottom">
+    <div class="col-md-8">
+      <h3 class="head-pad">
+          Project pages
+      </h3>
+    </div>
+    <div class="col-md-4 head-right">
+      {% if registered == True %}
+        <a class="btn btn-success head-pad" href="/event/{{ event.slug }}/create_project">Create Project</a>
+      {% endif %}
+    </div>
   </div>
-  <div class="col-md-4 head-right">
-    {% if registered == True %}
-      <a class="btn btn-success head-pad" href="/event/{{ event.id }}/create_project">Create Project</a>
-    {% endif %}
-  </div>
-</div>
 
-<div id="accordion">
-    {% for p in projects %}
-    <div class="card">
-      <div class="card-header" id="heading{{ forloop.counter }}">
-        <div class="row">
+  <div id="accordion">
+      {% for p in projects %}
+      <div class="card">
+        <div class="card-header" id="heading{{ forloop.counter }}">
+          <div class="row">
 
-          <div class="col-md-8">
-            <h5 class="mb-0">
-              <button id="btn{{ forloop.counter }}" class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-                {{forloop.counter }} -{{ p.name }}
-              </button>
-            </h5>
-          </div>
-          <div class="col-md-4 text-left">
-            Creator: <a href="/users/{{ p.creator }}"> {{ p.creator }} </a> 
-          </div>
-        </div>
-      </div>
-      
-      <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordion">
-        <div class="card-body">
-            <div class="col-md-12">
-                <div class="jumbotron">
-                  <h2>
-                    Description
-                  </h2>
-                  <p>
-                      {{ p.detail_long }}
-                  </p>
-                  <p>
-                    <a class="btn btn-primary btn-large" href="{{ p.main_url }}">{{ p.main_url }}</a>
-                  </p>
-                </div>
-                <dl>
-                  <dt>
-                    Resource links
-                  </dt>
-                  <dd>
-                    Link 1
-                  </dd>
-                  <dd>
-                    Link 2
-                  </dd>
-                  <dt>
-                    Resource Files
-                  </dt>
-                  <dd>
-                    File 1
-                  </dd>
-                  <dd>
-                    File 2
-                  </dd>
-                </dl>
+            <div class="col-md-4">
+              <h5 class="mb-0">
+                <button id="btn{{ forloop.counter }}" class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                  {{ p.name }}
+                </button>
+              </h5>
             </div>
-            <input type="hidden" id="myVar{{ forloop.counter }}" name="variable" value="{{ p.github }}" readonly>
-            
-            <div id="ghapidata" class="clearfix"></div>
+            {% if show %}
+            <div class="col-md-8 text-left" style="padding-top: 6px;">
+              Team: <a href="/users/{{ p.creator }}"> {{ p.creator }}</a> -
+              {% for u in p.members.all %}
+                <a href="/users/{{ u.username }}"> {{ u.username }} </a>
+                {% if not forloop.last %}
+                -
+                {% endif %}
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
         </div>
-      </div>
+
+        <div class="card-body">
+          <p class="card-text"><small class="text-muted">
+              Team: <a href="/users/{{ p.creator }}"> {{ p.creator }}</a> -
+              {% for u in p.members.all %}
+                <a href="/users/{{ u.username }}"> {{ u.username }} </a>
+                {% if not forloop.last %}
+                -
+                {% endif %}
+              {% endfor %}
+          </small></p>
+        </div>
+
+        <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordion">
+          <div class="card-body">
+              <div class="col-md-12">
+                  <div class="jumbotron">
+                    <h2>
+                      <a href={{ p.get_absolute_url }}>Description</a>
+                      {% if user.is_authenticated %}
+                        {% if user.username|safe == p.creator|safe %}
+                          - 
+                          <a href="/project/{{ p.slug }}/edit"class="btn btn-warning" role="button"> Edit </a>
+                        {% endif %}
+                      {% endif %}
+                    </h2>
+                    <p>
+                        {{ p.detail_small }}
+                    </p>
+                    {% if p.main_url %}
+                    <p>
+                      <a class="btn btn-primary btn-large" href="{{ p.main_url }}">{{ p.main_url }}</a>
+                    </p>
+                    {% endif %}
+                    <p>
+                      <a href="{{ p.get_absolute_url }}"class="btn btn-info" role="button"> View Details </a>
+                    </p>
+                  </div>
+                  <dl>
+                    <dt>
+                      Resource links
+                    </dt>
+                    {% for r in p.resources.all %}
+                      <dd>
+                        <a href="{{ r.name|safe }}">{{r.name}}</a>
+                      </dd>
+                      {% empty %}
+                      <dd>
+                        <small>No relevant data, yet.</small>
+                      </dd>
+                    {% endfor %}
+                  </dl>
+              </div>
+              {% if p.github %}
+              <input type="hidden" id="myVar{{ forloop.counter }}" name="variable" value="{{ p.github }}" readonly>
+              
+              <div id="ghapidata" class="clearfix"></div>
+              {% endif %}
+          </div>
+        </div>
+    </div>
     {% endfor %}
   </div>
+
+{% if show %}
+  <div class="card-deck">
+    {% for p in projects %}
+    <div class="container">
+    <div class="row pddn-10-top">
+        <div class="col-12">
+          <div class="card">
+            {% if p.img %}
+              <img class="card-img-top" src="..." alt="Card image cap">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title"><a href={{ p.get_absolute_url }}>{{ p.name }}</a></h5>
+              <p class="card-text">{{ p.detail_small }}</p>
+              <p class="card-text"><small class="text-muted">
+                  Team: <a href="/users/{{ p.creator }}"> {{ p.creator }}</a> -
+                  {% for u in p.members.all %}
+                    <a href="/users/{{ u.username }}"> {{ u.username }} </a>
+                    {% if not forloop.last %}
+                    -
+                    {% endif %}
+                  {% endfor %}
+              </small></p>
+            </div>
+            <div class="card-footer">
+              <small class="text-muted">
+                <a href="{{ p.get_absolute_url }}"class="btn btn-info btn-sm" role="button"> View Details </a>
+                {% if user.is_authenticated %}
+                  {% if user.username|safe == p.creator|safe %}
+                    <a href="{{ p.get_absolute_url }}/edit" class="btn btn-warning btn-sm" role="button"> Edit </a>
+                  {% endif %}
+                {% endif %}
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 </div>
 
 <div class="pddn-100-top"></div>
 
-{% block scripts %} 
-<script>
-  // $(document).ready(function(){
-  //   $('#accordion').on('shown.bs.collapse', function (e) {
-  //     alert($(e.target).find('input').val());
-  //   })
-  // });
-  function pathURL(url) {
-        var parser = document.createElement('a'),
-            searchObject = {},
-            queries, split, i;
-        // Let the browser do the work
-        parser.href = url;
-        // Convert query string to object
-        queries = parser.search.replace(/^\?/, '').split('&');
-        for( i = 0; i < queries.length; i++ ) {
-            split = queries[i].split('=');
-            searchObject[split[0]] = split[1];
-        }
-        return parser.pathname;
-        // {
-        //     protocol: parser.protocol,
-        //     host: parser.host,
-        //     hostname: parser.hostname,
-        //     port: parser.port,
-        //     pathname: parser.pathname,
-        //     search: parser.search,
-        //     searchObject: searchObject,
-        //     hash: parser.hash
-        // };
-    }
-
-  $(document).ready(function(){
-    $('#accordion').on('shown.bs.collapse', function (e) {
-      var innelem = $(e.target).find('#ghapidata');
-      e.preventDefault();
-      $(innelem).html('<div id="loader"><img src="/static/img/loader.gif" alt="loading..."></div>');
-      
-      var username = $('#ghusername').val();
-      var requri   = 'https://api.github.com/users/dfcastap';
-      var repouri  = 'https://api.github.com/users/dfcastap/repos';
-      var repiss  = 'https://api.github.com/repos'+ pathURL($(e.target).find('input').val()) + '/issues' 
-      
-      requestJSON(repiss, function(json) {
-        if(json.message == "Not Found") {
-          $(innelem).html("<h2>No Repo Info Found</h2>");
-        }
-        
-        else {
-
-          var outhtml = '';
-
-          var issues;
-          $.getJSON(repiss, function(json){
-            issues = json;   
-            outputIssueContent();                
-          });        
-
-          function outputIssueContent() {
-            if(issues.length == 0) { outhtml = outhtml + '<p>No open issues!</p>'; }
-            else {
-              outhtml = outhtml + '<h5 class="card-title">Open Issues on Github:</h5> <ul class="list-group">';
-              var i = 0;
-              $.each(issues, function(index) {
-                i = i+1;
-                var cmt = issues[index];
-                if(cmt.state == 'open' && i<10) {
-                  var odate = moment(cmt.created_at);
-                  var now = moment();
-                  var delta = moment.duration(now.diff(odate)).humanize();
-                  outhtml = outhtml +
-                            '<li class="list-group-item list-group-item-success"><a href="'+cmt.html_url+'" target="_blank">' +
-                                cmt.title + '</a>' + '- ' + delta + ' ago' +
-                            ' - author: ' + cmt.user.login + '</li>'; }
-              });
-              outhtml = outhtml + '</ul>'; 
-            }
-            $(innelem).html(outhtml);
-          } // end outputPageContent()
-        } // end else statement
-      }); // end requestJSON Ajax call
-    }); // end click event handler
-    
-    function requestJSON(url, callback) {
-      $.ajax({
-        url: url,
-        complete: function(xhr) {
-          callback.call(null, xhr.responseJSON);
-        }
-      });
-    }
-  });
-</script>
-{% endblock %}
 
 {% endblock %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="jumbotron">
-				<h2>
-					Hello, world!
-				</h2>
-				<p>
-					This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
-				</p>
-				<p>
-					<a class="btn btn-primary btn-large" href="#">Learn more</a>
-				</p>
-			</div>
-			<dl>
-				<dt>
-					Description lists
-				</dt>
-				<dd>
-					A description list is perfect for defining terms.
-				</dd>
-				<dt>
-					Euismod
-				</dt>
-				<dd>
-					Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.
-				</dd>
-				<dd>
-					Donec id elit non mi porta gravida at eget metus.
-				</dd>
-				<dt>
-					Malesuada porta
-				</dt>
-				<dd>
-					Etiam porta sem malesuada magna mollis euismod.
-				</dd>
-				<dt>
-					Felis euismod semper eget lacinia
-				</dt>
-				<dd>
-					Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-				</dd>
-			</dl>
-		</div>
-	</div>
-</div>
