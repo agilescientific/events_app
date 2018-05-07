@@ -32,6 +32,7 @@
                 </button>
               </h5>
             </div>
+            {% if show %}
             <div class="col-md-8 text-left" style="padding-top: 6px;">
               Team: <a href="/users/{{ p.creator }}"> {{ p.creator }}</a> -
               {% for u in p.members.all %}
@@ -41,9 +42,22 @@
                 {% endif %}
               {% endfor %}
             </div>
+            {% endif %}
           </div>
         </div>
-        
+
+        <div class="card-body">
+          <p class="card-text"><small class="text-muted">
+              Team: <a href="/users/{{ p.creator }}"> {{ p.creator }}</a> -
+              {% for u in p.members.all %}
+                <a href="/users/{{ u.username }}"> {{ u.username }} </a>
+                {% if not forloop.last %}
+                -
+                {% endif %}
+              {% endfor %}
+          </small></p>
+        </div>
+
         <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordion">
           <div class="card-body">
               <div class="col-md-12">
@@ -95,6 +109,7 @@
     {% endfor %}
   </div>
 
+{% if show %}
   <div class="card-deck">
     {% for p in projects %}
     <div class="container">
@@ -133,6 +148,7 @@
     </div>
     {% endfor %}
   </div>
+{% endif %}
 
 </div>
 

@@ -83,6 +83,8 @@ class Event(models.Model):
                                     default='http://placehold.it/1000x300')
 
     slug = models.SlugField(max_length=140, null=True)
+    canjoin = models.NullBooleanField()
+    hide = models.NullBooleanField()
 
     def __str__(self):
         return self.event_title

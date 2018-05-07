@@ -40,6 +40,7 @@ class ProjectForm(forms.ModelForm):
         super(ProjectForm, self).__init__(*args, **kwargs)
         self.fields['detail_long'].label = "Long Description (Markdown)"
         self.fields['detail_small'].label = "Short Description"
+        self.fields['resources'].label = "Relevant URLs (separate with commas)"
         # self.fields['resources'].label = "URLs of relevant info (separated by commas)"
 
     class Meta:
@@ -52,11 +53,11 @@ class ProjectForm(forms.ModelForm):
         }
 
     name = forms.CharField(label='Project Name')
-    github = forms.URLField(label='URL to Github Repo')
+    github = forms.URLField(label='URL to Github Repo', required=False)
     detail_small = forms.Textarea()
     detail_long = MarkdownxFormField()
-    members = AutoCompleteSelectMultipleField('users')
-    resources = TagField()
+    members = AutoCompleteSelectMultipleField('users', required=False)
+    resources = TagField(required=False)
 
     # Uni-form
     helper = FormHelper()
