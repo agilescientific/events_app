@@ -14,6 +14,7 @@ import os
 from machina import get_apps as get_machina_apps
 from machina import MACHINA_MAIN_TEMPLATE_DIR
 from machina import MACHINA_MAIN_STATIC_DIR
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,12 +25,15 @@ TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'mwwy+8it+3w-h8)@mbx_)2hcac&feku+@!%c*hg9b8dk*^me1n'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['agile-events.doesntexist.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['agile-events.doesntexist.com',
+                 'localhost',
+                 '127.0.0.1',
+                 '.agilescientific.com']
 
 
 # Application definition
@@ -159,9 +163,14 @@ LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = '/account/login/'
 
 # Use console backend for now
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-DEFAULT_FROM_EMAIL = 'diego@agilescientific.com'
+DEFAULT_FROM_EMAIL = 'hello@agilescientific.com'
 
 # Django Account email config.
 THEME_CONTACT_EMAIL = 'hello@agilescientific.com'
@@ -210,4 +219,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTH_PROFILE_MODULE = 'uprofile.UProfile'
 
 SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
-SITE_URL = 'http://localhost:8000'
+SITE_URL = 'http://events.agilescientific.com'

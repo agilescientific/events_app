@@ -7,12 +7,12 @@
   </h1>
 
   {% for e in events %}
+  {% if e.hide %}
+  {% else %}
   <!-- Event -->
   <div class="row">
       <div class="col-md-5">
-        <a href="#">
-            <a href="{{ e.get_absolute_url }}"><img class="img-fluid rounded mb-3 mb-md-0" src="{{ e.img_url|safe }}" alt=""></a>
-        </a>
+        <a href="{{ e.get_absolute_url }}"><img class="img-fluid rounded mb-3 mb-md-0" src="{{ e.img_url|safe }}" alt=""></a>
       </div>
       <div class="col-md-7">
         <h3>{{ e.event_title }}</h3>
@@ -24,6 +24,7 @@
   
   <hr>
   <!-- /.row -->
+  {% endif %}
   {% endfor %}
 
   <div class="pddn-100-top"></div>

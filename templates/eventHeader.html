@@ -27,12 +27,19 @@
     <div class="jumbotron jumbotron-fluid jumbotron-text">
         <div class="container text-white">
         <h1>{{ event.event_title }}</h1>
+        <p>
         {% for s in event.sponsors.all %}
-            <p>Sponsors:
+            {% if forloop.first %}
+            Sponsors:
+            {% endif %}
                 <a class='text-white' href="{{ s.get_absolute_url }}">{{ s.name }}</a>
-            </p>
+                {% if not forloop.last %}
+                    -
+                {% endif %}
+            
         {% empty %}
         {% endfor %}
+        </p>
         </div>
     </div>
 </section>

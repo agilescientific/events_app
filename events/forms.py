@@ -67,7 +67,6 @@ class ProjectForm(forms.ModelForm):
                             'members',
                             Field('detail_small'),
                             Field('detail_long', style='width:100%;'),
-                            # HTML('<small id="emailHelp" class="form-text text-muted">Input the URLs separated by commas</small>'),
                             'resources',
                             'github',
                             FormActions(

@@ -81,6 +81,8 @@
 
 <div class="pddn-100-top"></div>
 
+{% endblock %}
+
 {% block scripts %} 
 <script>
   // $(document).ready(function(){
@@ -162,9 +164,10 @@
     }); // end requestJSON Ajax call
 
     requestReadme(repreadme, function(json) {
-
+      if(json.message == "Not Found") {
         $(rdelem).html("<h2>No Repo Info Found</h2>");
-
+      }
+      else {
         var outhtml = '';
 
         var readme;
@@ -174,9 +177,13 @@
                 },
                 dataType: 'html',
                 complete: function(xhr) {
-                  readme = xhr.responseText;
-                  outhtml = outhtml + readme;
-                  $(rdelem).html(outhtml);
+                  if(xhr.message == "Not Found") {
+                    $(rdelem).html("<h2>No Repo Info Found</h2>");
+                  } else {
+                    readme = xhr.responseText;
+                    outhtml = outhtml + readme;
+                    $(rdelem).html(outhtml);
+                  }
                   } 
               }
         );
@@ -185,8 +192,8 @@
           outhtml = outhtml + readme;
           $(rdelem).html(outhtml);
         } // end outputPageContent()
-
-    }); // end requestJSON Ajax call
+      } // end else statement
+    }); // end requestREADME Ajax call
     
     function requestJSON(url, callback) {
       $.ajax({
@@ -235,6 +242,4 @@
     // console.log(output);
   });
 </script>
-{% endblock %}
-
 {% endblock %}

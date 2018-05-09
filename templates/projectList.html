@@ -27,8 +27,8 @@
 
             <div class="col-md-4">
               <h5 class="mb-0">
-                <button id="btn{{ forloop.counter }}" class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
-                  {{ p.name }}
+                <button id="btn{{ forloop.counter }}" class="btn btn-dark" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                  {{ p.name }} <i id="arrow{{ forloop.counter }}" class="fas fa-arrow-circle-down"></i>
                 </button>
               </h5>
             </div>
@@ -83,26 +83,8 @@
                       <a href="{{ p.get_absolute_url }}"class="btn btn-info" role="button"> View Details </a>
                     </p>
                   </div>
-                  <dl>
-                    <dt>
-                      Resource links
-                    </dt>
-                    {% for r in p.resources.all %}
-                      <dd>
-                        <a href="{{ r.name|safe }}">{{r.name}}</a>
-                      </dd>
-                      {% empty %}
-                      <dd>
-                        <small>No relevant data, yet.</small>
-                      </dd>
-                    {% endfor %}
-                  </dl>
               </div>
-              {% if p.github %}
-              <input type="hidden" id="myVar{{ forloop.counter }}" name="variable" value="{{ p.github }}" readonly>
-              
-              <div id="ghapidata" class="clearfix"></div>
-              {% endif %}
+
           </div>
         </div>
     </div>
@@ -157,3 +139,22 @@
 
 {% endblock %}
 
+{% block scripts %}
+<script>
+  
+  $(document).ready(function(){ 
+    $('#accordion').on('shown.bs.collapse', function (e) {
+      var n = e.target.id.replace('collapse','')
+      var arrelem = $.find('#arrow' + n);
+      $(arrelem).addClass('fa-arrow-circle-up');
+      $(arrelem).removeClass('fa-arrow-circle-down');
+    });
+    $('#accordion').on('hide.bs.collapse', function (e) { 
+      var n = e.target.id.replace('collapse','')
+      var arrelem = $.find('#arrow' + n);
+      $(arrelem).removeClass('fa-arrow-circle-up');
+      $(arrelem).addClass('fa-arrow-circle-down');
+    });
+  });
+</script>
+{% endblock %}

@@ -41,6 +41,16 @@
         </a>
       </div>
   </div>
+  <div class="row pddn-50-top">
+    <div class="col-12 text-center">
+      {% for s in event.sponsors.all %}
+        <a class='text-white' href="{{ s.get_absolute_url }}">
+          <img width="30%;" src="{{ s.org_logo_thumbnail.url }}"/>
+        </a>
+      {% empty %}
+      {% endfor %}
+    </div>
+  </div>
   <!-- /.row -->
 </div>
 
@@ -58,7 +68,7 @@
         </button>
       </div>
       <div class="modal-body">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam laoreet eros non ligula sodales fringilla. Nullam mi enim, vehicula et pulvinar tempus, faucibus vel quam. Sed cursus auctor ex, nec condimentum turpis dapibus eget. Nam tempus urna nec mi convallis, et placerat dui placerat. Proin iaculis ipsum metus, at gravida erat rhoncus eu. Quisque dignissim molestie tortor, quis tristique ligula tincidunt sit amet. Sed iaculis, mi nec dictum maximus, magna nulla pretium turpis, sit amet sodales tellus diam in nunc. 
+          By joining you accept ___.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
