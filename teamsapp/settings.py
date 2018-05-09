@@ -30,10 +30,11 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['agile-events.doesntexist.com',
+ALLOWED_HOSTS = [
                  'localhost',
                  '127.0.0.1',
-                 '.agilescientific.com']
+                 'events.agilescientific.com',
+                 'agile-events.doesntexist.com']
 
 
 # Application definition
@@ -219,9 +220,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTH_PROFILE_MODULE = 'uprofile.UProfile'
 
 SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
-SITE_URL = 'https://events.agilescientific.com'
+SITE_URL = 'http://events.agilescientific.com'
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
