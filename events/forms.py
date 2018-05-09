@@ -41,12 +41,12 @@ class ProjectForm(forms.ModelForm):
         self.fields['detail_long'].label = "Long Description (Markdown)"
         self.fields['detail_small'].label = "Short Description"
         self.fields['resources'].label = "Relevant URLs (separate with commas)"
-        self.fields['mainurl'].label = "Does your project have a website? Share its URL:"
+        self.fields['main_url'].label = "Does your project have a website? Share its URL:"
         # self.fields['resources'].label = "URLs of relevant info (separated by commas)"
 
     class Meta:
         model = Project
-        fields = ['name', 'members', 'detail_small', 'detail_long', 'mainurl', 'resources', 'github']
+        fields = ['name', 'members', 'detail_small', 'detail_long', 'main_url', 'resources', 'github']
         # labels = ['Name', 'Members', 'Short Description', 'Long Description (Markdown)', 'resources', 'URL to Github Repo']
 
         widgets = {
@@ -55,7 +55,7 @@ class ProjectForm(forms.ModelForm):
 
     name = forms.CharField(label='Project Name')
     github = forms.URLField(label='URL to Github Repo', required=False)
-    mainurl = forms.URLField(label='Does your project have a website? Share its URL:', required=False)
+    main_url = forms.URLField(label='Does your project have a website? Share its URL:', required=False)
     detail_small = forms.Textarea()
     detail_long = MarkdownxFormField()
     members = AutoCompleteSelectMultipleField('users', required=False)
@@ -69,7 +69,7 @@ class ProjectForm(forms.ModelForm):
                             'members',
                             Field('detail_small'),
                             Field('detail_long', style='width:100%;'),
-                            'mainurl',
+                            'main_url',
                             'resources',
                             'github',
                             FormActions(
