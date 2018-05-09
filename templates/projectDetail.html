@@ -42,7 +42,7 @@
                   </p>
                   {% if project.main_url %}
                   <p>
-                    <a class="btn btn-primary btn-large" href="{{ project.main_url }}">{{ project.main_url }}</a>
+                    <a class="btn btn-primary btn-large" href="{{ project.main_url }}">Website</a>
                   </p>
                   {% endif %}
                 </div>
@@ -68,8 +68,8 @@
             <input type="hidden" name="variable" value="{{ project.github }}" readonly>
             
             <div class="row">
-              <div id="ghreadme" class="clearfix col-6"></div>
-              <div id="ghapidata" class="clearfix col-6"></div>
+              <div id="ghreadme" class="col-lg-6 col-md-6 col-12"></div>
+              <div id="ghapidata" class="col-lg-6 col-md-6 col-12"></div>
             </div>
             {% endif %}
         </div>
