@@ -19,7 +19,7 @@
                     {{ userdata.first_name }} {{ userdata.last_name }} ({{ userdata.username }}) 
                     {% if user.is_authenticated %}
                         {% if user.username == userdata.username %}
-                            - <a href="/account/settings/">Edit Profile</a>
+                            - <a class="btn btn-warning" role="button" href="/account/settings/">Edit Profile</a>
                         {% endif %}
                     {% endif %}
                 </h5>
