@@ -26,5 +26,18 @@
             </form>
         </div>
     </div>
+
+    
+    <div class="row pddn-50-top">
+        <hr>
+        <div class="col-6 mx-auto">
+            <a class="btn btn-warning" role="button" href="{% url "account_password" %}">
+                {% trans "Change password" %}
+            </a>
+            <a class="btn btn-danger" role="button" href="{% url "account_delete" %}">
+                {% trans "Delete account" %}
+            </a>
+        </div>
+    </div>
 </div>
 {% endblock %}

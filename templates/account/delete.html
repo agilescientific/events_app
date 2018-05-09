@@ -1,4 +1,4 @@
-{% extends "account/base.html" %}
+{% extends "base.html" %}
 
 {% load i18n %}
 
@@ -7,13 +7,19 @@
 {% block head_title %}{% trans "Delete Account" %}{% endblock %}
 
 {% block content %}
-    <h1>{% trans "Delete Account" %}</h1>
-    
-    <p>{% blocktrans %}If you go ahead and delete your account, your information will be <b>expunged within {{ ACCOUNT_DELETION_EXPUNGE_HOURS }} hours</b>.{% endblocktrans %}</p>
-    
-    <form method="post" action="{% url "account_delete" %}" autocapitalize="off">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">{% trans "Delete My Account" %}</button>
-    </form>
+<div class="container">
+    <div class="row pddn-50-top">
+        <div class="col-md-5 mx-auto pddn-100-top">
+            <h1>{% trans "Delete Account" %}</h1>
+            
+            <p>{% blocktrans %}If you go ahead and delete your account, your information will be <b>expunged within {{ ACCOUNT_DELETION_EXPUNGE_HOURS }} hours</b>.{% endblocktrans %}</p>
+            
+            <form method="post" action="{% url "account_delete" %}" autocapitalize="off">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">{% trans "Delete My Account" %}</button>
+            </form>
+        </div>
+    </div>
+</div>
     
 {% endblock %}
