@@ -5,6 +5,13 @@
 {% block head_title %}{% trans "Email confirmed" %}{% endblock %}
 
 {% block body %}
-    <h1>{% trans "Email confirmed" %}</h1>
-    <p>{% blocktrans with email=confirmation.email_address.email %}You have confirmed <b>{{ email }}</b>{% endblocktrans %}</p>
+<!-- Page Content -->
+<div class="container">
+    <div class="row pddn-50-top">
+        <div class="col-md-5 mx-auto pddn-100-top">
+            <h1>{% trans "Email confirmed" %}</h1>
+            <p>{% blocktrans with email=confirmation.email_address.email %}You have confirmed <b>{{ email }}</b>{% endblocktrans %}</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
