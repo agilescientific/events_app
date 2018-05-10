@@ -106,3 +106,5 @@ ENV/
 *.sqlite3
 
 /static_files
+
+*.bak

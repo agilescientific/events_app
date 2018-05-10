@@ -65,9 +65,9 @@
             {% if project.github %}
             <h2 class="pddn-10-top"> Project Repo information </h2>
             <hr>
-            <input type="hidden" name="variable" value="{{ project.github }}" readonly>
+            <input type="hidden" name="variable" value="{{ project.slug }}" readonly>
             
-            <div class="row">
+            <div id="repocontainer" class="row">
               <div id="ghreadme" class="col-lg-6 col-md-6 col-12"></div>
               <div id="ghapidata" class="col-lg-6 col-md-6 col-12"></div>
             </div>
@@ -85,115 +85,47 @@
 
 {% block scripts %} 
 <script>
-  // $(document).ready(function(){
-  //   $('#accordion').on('shown.bs.collapse', function (e) {
-  //     alert($(e.target).find('input').val());
-  //   })
-  // });
-  function pathURL(url) {
-    var parser = document.createElement('a'),
-        searchObject = {},
-        queries, split, i;
-    // Let the browser do the work
-    parser.href = url;
-    // Convert query string to object
-    queries = parser.search.replace(/^\?/, '').split('&');
-    for( i = 0; i < queries.length; i++ ) {
-        split = queries[i].split('=');
-        searchObject[split[0]] = split[1];
-    }
-    return parser.pathname;
-    // {
-    //     protocol: parser.protocol,
-    //     host: parser.host,
-    //     hostname: parser.hostname,
-    //     port: parser.port,
-    //     pathname: parser.pathname,
-    //     search: parser.search,
-    //     searchObject: searchObject,
-    //     hash: parser.hash
-    // };
-}
 
   $(document).ready(function(){
+    var repcontainer = $(document).find('#repocontainer');
     var innelem = $(document).find('#ghapidata');
     var rdelem = $(document).find('#ghreadme');
     $(innelem).html('<div id="loader"><img src="/static/img/loader.gif" alt="loading..."></div>');
     $(rdelem).html('<div id="loader"><img src="/static/img/loader.gif" alt="loading..."></div>');
 
-    var repiss  = 'https://api.github.com/repos'+ pathURL($(document).find('input').val()) + '/issues';
-    var repreadme  = 'https://api.github.com/repos'+ pathURL($(document).find('input').val()) + '/readme' 
-    
-    requestJSON(repiss, function(json) {
-      if(json.message == "Not Found") {
-        $(innelem).html("<h2>No Repo Info Found</h2>");
-      }
-      
-      else {
+    var get_gh = '/project/' + $(document).find('input').val() + '/github';
 
-        var outhtml = '';
+    requestJSON(get_gh, function(json){
+      var outhtml = '';
+      $.getJSON(get_gh, function(json){
+        issues = json;
+        outputIssueContent();
+      });
 
-        var issues;
-        $.getJSON(repiss, function(json){
-          issues = json;   
-          outputIssueContent();                
-        });
-
-        function outputIssueContent() {
-          if(issues.length == 0) { outhtml = outhtml + '<p>No open issues!</p>'; }
-          else {
-            outhtml = outhtml + '<h5 class="card-title">Latest Issues:</h5> <ul class="list-group">';
-            var i = 0;
-            $.each(issues, function(index) {
-              i = i+1;
-              var cmt = issues[index];
-              if(cmt.state == 'open' && i<6) {
-                var odate = moment(cmt.created_at);
-                var now = moment();
-                var delta = moment.duration(now.diff(odate)).humanize();
-                outhtml = outhtml +
-                          '<li class="list-group-item list-group-item-success"><a href="'+cmt.html_url+'" target="_blank">' +
-                              '<small>' + cmt.title + '</a>' + '- ' + delta + ' ago' +
-                          ' - author: ' + cmt.user.login + '</small>' + '</li>'; }
-            });
-            outhtml = outhtml + '</ul>'; 
-          }
+      function outputIssueContent() {
+        if(issues.error){ $(repcontainer).html('<div class="col-12 text-center"> No Repo Found!</div>');}
+        else {
+          var i = 0;
+          $.each(issues, function(index) {
+            i = i+1;
+            var cmt = issues[index];
+            if(cmt.state == 'open' && i<6) {
+              var odate = moment(cmt.created_at);
+              var now = moment();
+              var delta = moment.duration(now.diff(odate)).humanize();
+              outhtml = outhtml +
+                        '<li class="list-group-item list-group-item-success"><a href="'+cmt.html_url+'" target="_blank">' +
+                            '<small>' + cmt.title + '</a>' + '- ' + delta + ' ago' +
+                        ' - author: ' + cmt.user.login + '</small>' + '</li>'; }
+          });
+          outhtml = outhtml + '</ul>';
           $(innelem).html(outhtml);
-        } // end outputPageContent()
-      } // end else statement
-    }); // end requestJSON Ajax call
+          $(rdelem).html(issues[issues.length-1].readme_html);
+          }
+        }
+    });
 
-    requestReadme(repreadme, function(json) {
-      if(json.message == "Not Found") {
-        $(rdelem).html("<h2>No Repo Info Found</h2>");
-      }
-      else {
-        var outhtml = '';
 
-        var readme;
-        $.ajax({ url: repreadme,
-                accepts:{
-                  html: 'application/vnd.github.VERSION.html'
-                },
-                dataType: 'html',
-                complete: function(xhr) {
-                  if(xhr.message == "Not Found") {
-                    $(rdelem).html("<h2>No Repo Info Found</h2>");
-                  } else {
-                    readme = xhr.responseText;
-                    outhtml = outhtml + readme;
-                    $(rdelem).html(outhtml);
-                  }
-                  } 
-              }
-        );
-
-        function outputReadmeContent() {
-          outhtml = outhtml + readme;
-          $(rdelem).html(outhtml);
-        } // end outputPageContent()
-      } // end else statement
-    }); // end requestREADME Ajax call
     
     function requestJSON(url, callback) {
       $.ajax({
@@ -204,42 +136,6 @@
       });
     };
 
-    function requestReadme(url, callback){
-      $.ajax({ url: url,
-                accepts:{
-                  html: 'application/vnd.github.VERSION.html'
-                },
-                dataType: 'html',
-                complete: function(xhr) {
-                  callback.call(null, xhr);
-                  } 
-              }
-      );
-    }
-              
-    // function getReadme(myUrl){
-    //     var result = null;
-    //     $.ajax( { url: myUrl,
-    //               accepts:{
-    //                 html: 'application/vnd.github.VERSION.html'
-    //               },
-    //               type: 'get', 
-    //               dataType: 'html',
-    //               async: false,
-    //               success: function(data) { result = data; } 
-    //             }
-    //     );
-    //     FileReady = true;
-    //     return result;
-    // }
-    
-    // var rdelem = $(document).find('#ghreadme');
-    //$(rdelem).html('<div id="loader"><img src="/static/img/loader.gif" alt="loading..."></div>');
-    // var readme_source = getReadme(repreadme);
-    // // convert markdown to html
-    // var output = readme_source;
-    // $(rdelem).html(output);
-    // console.log(output);
   });
 </script>
 {% endblock %}

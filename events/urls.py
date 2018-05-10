@@ -16,5 +16,6 @@ urlpatterns = [
     path('project/<slug:slug>', views.ProjectDetailView.as_view(), name='project-detail'),
     path('project/<slug:slug>/edit', views.ProjectEditView.as_view(), name='project-edit'),
     path('project/<slug:slug>/delete', views.ProjectDeleteView.as_view(), name='project-delete'),
+    path('project/<slug:slug>/github', views.GetGithubInfo.as_view(), name='project-github'),
     path('organization/<slug:slug>/upload_pic/', views.UploadPicture.as_view(), name='upload_pic'),
 ] 

@@ -227,3 +227,6 @@ SITE_URL = 'http://events.agilescientific.com'
 # SECURE_SSL_REDIRECT = True
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
+
+GH_ID = config('GH_ID')
+GH_SECRET = config('GH_SECRET')
