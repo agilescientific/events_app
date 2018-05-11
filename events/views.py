@@ -342,12 +342,12 @@ class UploadPicture(LoginRequiredMixin, View):
                 return HttpResponseRedirect('/organization/{}'.format(slug))
         return HttpResponseRedirect('/organization/{}'.format(slug))
 
-class GetGithubInfo(LoginRequiredMixin, View):
+class GetGithubInfo(View):
 
     def get(self, request, slug):
         if request.method == 'GET':
             json_r = {}
-            proj = Project.objects.get(slug=slug)
+            proj = get_object_or_404(Project, slug=slug)
             if proj.github != '' or proj.github != None:
                 payload = {'client_id':settings.GH_ID, 'client_secret':settings.GH_SECRET}
 
