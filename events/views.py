@@ -381,3 +381,9 @@ class GetGithubInfo(LoginRequiredMixin, View):
 
         #return HttpResponseRedirect('/project/{}'.format(slug))
         return JsonResponse(json_r, safe=False)
+
+class TermsView(TemplateView):
+    template_name = 'terms.html'
+
+class PrivacyView(TemplateView):
+    template_name = 'privacy.html'

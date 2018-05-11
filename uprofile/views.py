@@ -31,7 +31,10 @@ class UploadPicture(LoginRequiredMixin, View):
                 m.profile_pic = form.cleaned_data['image']
                 m.save()
                 return HttpResponseRedirect('/users/{}'.format(slug))
+            else:
+                messages.error(request, "Image size is too big! (Max. size is 1MB)")
         return HttpResponseRedirect('/users/{}'.format(slug))
+
 
 class SettingsView(account.views.SettingsView):
     form_class = SettingsForm

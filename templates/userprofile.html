@@ -8,9 +8,6 @@
             <li class="nav-item">
                 <a href="#profile" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
             </li>
-            <li class="nav-item">
-                <a href="#projects" data-target="#projects" data-toggle="tab" class="nav-link">Projects</a>
-            </li>
         </ul>
         
         <div class="tab-content py-4">
@@ -24,7 +21,7 @@
                     {% endif %}
                 </h5>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <strong>About</strong>
                         <p>
                             {{ profile.about }}
@@ -39,46 +36,45 @@
                         <i class="fab fa-linkedin"></i> <a href='https://www.linkedin.com/in/{{ profile.linkedin_uname }}/'>{{ profile.linkedin_uname }}</a> &nbsp;
                         {% endif %}
                     </div>
-                    <!-- Badges -->
-                    <!-- <div class="col-md-6">
-                        <h6>Badges</h6>
-                        <a href="#" class="badge badge-dark badge-pill">Machine Learning</a>
-                        <a href="#" class="badge badge-dark badge-pill">Python</a>
-                        <a href="#" class="badge badge-dark badge-pill">html</a>
-                        <a href="#" class="badge badge-dark badge-pill">jquery</a>
-                        <a href="#" class="badge badge-dark badge-pill">bootstrap</a>
-                        <hr>
-                    </div> -->
+
                     <!-- Recent Activity -->
                     <div class="col-md-12 pddn-10-top">
-                        <h5 class="mt-2"><span class="far fa-clock ion-clock float-right"></span> Recent Activity</h5>
+                        <h5 class="mt-2"><span class="far fa-clock ion-clock float-right"></span> Event Activity</h5>
                         <table class="table table-sm table-hover table-striped">
                             <tbody>
                                 {% for r in registration %}
-                                <tr>
-                                    <td>
-                                        Joined the <strong><a href="{{ r.event.get_absolute_url }}">{{ r.event.event_title }}</a></strong>
-                                    </td>
-                                </tr>
+                                    {% if r.event.hide %}
+                                    {% else %}
+                                    <tr>
+                                        <td>
+                                            Joined the <strong><a href="{{ r.event.get_absolute_url }}">{{ r.event.event_title }}</a></strong>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-12 pddn-10-top">
+                        <h5 class="mt-2"><span class="fas fa-barcode float-right"></span> Projects</h5>
+                        <table class="table table-sm table-hover table-striped">
+                            <tbody>
+                                {% for t in projects %}
+                                    {% if t.event.hide %}
+                                    {% else %}
+                                    <tr>
+                                        <td>
+                                            <strong><a href="{{ t.get_absolute_url }}">{{ t.name }} - {{ t.event.event_title }}</a></strong>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <!--/row-->
-            </div>
-            <div class="tab-pane" id="projects">
-                <table class="table table-hover table-striped">
-                    <tbody>
-                        {% for t in projects %}
-                        <tr>
-                            <td>
-                                <strong><a href="{{ t.get_absolute_url }}">{{ t.name }}</a></strong>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody> 
-                </table>
             </div>
         </div>
     </div>
@@ -93,7 +89,7 @@
                     </p>
                     <input type="submit" value="Submit" /> -->
                     
-                        <label for="id_image">Upload new picture:</label>
+                        <label for="id_image">Upload new picture (max. size is 1MB):</label>
                         
                         <input type="file" class="form-control-file pddn-10-btm" id="id_image" name=image>
                         <input type="submit" class="btn btn-secondary btn-sm " value="Submit" id="sub_btn">

@@ -9,6 +9,14 @@ from django.db.models.signals import post_save
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 
+from django.core.exceptions import ValidationError
+
+def validate_image(image):
+    file_size = image.file.size
+    limit = 2 # MByte
+    if file_size > limit * 1024 * 1024:
+        raise ValidationError("Max size of file is %s MB" % limit)
+
 # Create your models here.
 
 def user_directory_path(instance, filename):
