@@ -127,7 +127,7 @@ class Project(models.Model):
     creator = models.ForeignKey(User, related_name='projectCreator', on_delete=models.CASCADE)
     votes = models.BigIntegerField(default=0)
     github = models.URLField(verbose_name='URL to Github Repo', null=True, blank=True)
-    members = models.ManyToManyField(User)
+    members = models.ManyToManyField(User, blank=True)
     slug = models.SlugField(max_length=140, null=True)
     resources = TaggableManager(verbose_name='Resources', blank=True)
 
