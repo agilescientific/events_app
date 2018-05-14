@@ -387,3 +387,20 @@ class TermsView(TemplateView):
 
 class PrivacyView(TemplateView):
     template_name = 'privacy.html'
+
+from machina.apps.forum.views import ForumView as BaseForumView
+from machina.apps.forum.views import Forum
+
+class MForumView(BaseForumView):
+
+    def get_forum(self):
+        # self.forum = super(ForumView, self).get_forum(**kwargs)
+        self.event = get_object_or_404(Event, slug=self.kwargs['slug'])
+        self.forum = get_object_or_404(Forum, pk=self.event.forum_id)
+        return self.forum
+
+    def get_context_data(self, **kwargs):
+        context = super(MForumView, self).get_context_data(**kwargs)
+        # Some additional data can be added to the context here
+        context['event'] = self.event
+        return context

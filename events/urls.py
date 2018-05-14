@@ -20,4 +20,5 @@ urlpatterns = [
     path('organization/<slug:slug>/upload_pic/', views.UploadPicture.as_view(), name='upload_pic'),
     path('terms', views.TermsView.as_view(), name='terms'),
     path('privacy', views.PrivacyView.as_view(), name='privacy'),
+    # path('event/<slug:slug>/mforum', views.MForumView.as_view(), name='machinita'),
 ] 

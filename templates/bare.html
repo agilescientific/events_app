@@ -26,7 +26,6 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js"></script>
 
-
   </head>
 
   <body>
@@ -39,7 +38,17 @@
 
     <!-- Bootstrap core JavaScript -->
     {% bootstrap_javascript jquery='full' %}
-    {% block scripts %} {% endblock %}
+
+    {% block scripts %}
+    <script src="{% static 'js/machina.packages.min.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static 'js/machina.min.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+      $(function() {
+        machina.init();
+        {% block onbodyload %}{% endblock onbodyload %}
+      });
+    </script>
+    {% endblock %}
     <!-- <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script> -->
     <!-- <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script> -->
 

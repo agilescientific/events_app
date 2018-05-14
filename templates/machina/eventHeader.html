@@ -1,0 +1,51 @@
+<style type="text/css">
+    .jumbotron-text{
+      /* filter: blur(1px);
+      -webkit-filter: blur(1px); */
+      /* background-image: url('/static/img/SLC_img_only-wide.png'); */
+      background-image: url('/media/{{ event.banner_img }}');
+      background-color: #868686;
+      background-position: center center;
+      background-size: cover;
+      background-blend-mode: multiply;
+  
+      /* background: 
+      linear-gradient(purple 0%, red 90%), 
+      linear-gradient(to right, purple 0%, yellow 90%), 
+      url('/static/img/SLC_img_only-wide.png') 30px,
+      url('/static/img/SLC_img_only-wide.png') 20px;
+      background-blend-mode: screen, difference, lighten; */
+    }
+    #jumbo-head{
+        text-shadow: 1px 1px black;
+    }
+</style>
+
+<!-- Page Heading -->
+
+<section id="jumbo-head" class="pddn-30-top">
+    <div class="jumbotron jumbotron-fluid jumbotron-text">
+        <div class="container text-white">
+        <h1>{{ event.event_title }}</h1>
+        <p>
+        {% for s in event.sponsors.all %}
+            {% if forloop.first %}
+            Sponsors:
+            {% endif %}
+                <a class='text-white' href="{{ s.get_absolute_url }}">{{ s.name }}</a>
+                {% if not forloop.last %}
+                    -
+                {% endif %}
+            
+        {% empty %}
+        {% endfor %}
+        </p>
+        </div>
+    </div>
+</section>
+
+<div class="row">
+<div class="col-12 mx-auto pddn-10-top">
+    {% include "tabNav.html" %}
+</div>
+</div>
