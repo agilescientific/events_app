@@ -72,7 +72,8 @@ class Event(models.Model):
     event_location_city = models.CharField(max_length=100, null=True)
     event_location_country = models.CharField(max_length=100, null=True)
 
-    body_text = MarkdownxField(max_length=2000, default="")
+    body_text = MarkdownxField(max_length=5000, default="")
+    rules = MarkdownxField(max_length = 10000, default="")
     event_class = models.ForeignKey(EventClass, on_delete=models.CASCADE)
     forum = models.ForeignKey('forum.Forum', related_name='event_forum',
                               on_delete=models.CASCADE, blank=True, null=True)

@@ -404,3 +404,14 @@ class MForumView(BaseForumView):
         # Some additional data can be added to the context here
         context['event'] = self.event
         return context
+
+class RulesView(DetailView):
+    template_name = "rules.html"
+    model = Event
+    context_object_name = 'event'
+
+    def get_context_data(self,**kwargs):
+        context = super(RulesView, self).get_context_data(**kwargs)
+        context['current'] = 'rules'
+        context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).rules)
+        return context

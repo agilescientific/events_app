@@ -171,15 +171,15 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-DEFAULT_FROM_EMAIL = 'hello@agilescientific.com'
+DEFAULT_FROM_EMAIL = 'events@agilescientific.com'
 
 # Django Account email config.
-THEME_CONTACT_EMAIL = 'hello@agilescientific.com'
+THEME_CONTACT_EMAIL = 'evetns@agilescientific.com'
 ACCOUNT_EMAIL_CONFIRMATION_EMAIL = True
 ACCOUNT_OPEN_SIGNUP = False
 
 # URL Append slash
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

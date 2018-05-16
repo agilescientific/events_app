@@ -15,6 +15,11 @@
         <a class="nav-link {% if current == 'forum' %}active{% endif %}" href="/event/{{ event.slug }}/forum">Forum</a>
     </li>
     {% endif %}
+    {% if event.rules %}
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'rules' %}active{% endif %}" href="/event/{{ event.slug }}/rules">Rules</a>
+    </li>
+    {% endif %}
     {% if project %}
     <li class="nav-item">
         <a class="nav-link active" href="/project/{{ project.slug }}">{{ project.name }}</a>

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+{% include "eventHeader.html" %}
+
+<div class="col-10 mx-auto">
+  <div class="row pddn-30-top pddn-20-bottom">
+    <div class="col-md-10">
+      <h1 class="head-pad">
+        Rules
+      </h1>
+    </div>
+    <div class="col-md-2 head-right">
+      {% if object.canjoin %}
+      {% if registered == False %}
+        <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#joinModalCenter">
+            Join
+        </button>
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Project -->
+  <div class="row pddn-30-top">
+      <div class="col-md-10 mx-auto">
+        <!-- <img class="img-fluid rounded mb-3 mb-md-0" src="{{ event.img_url|safe }}" alt=""> -->
+        <p>{{ html_body|safe }}</p>
+      </div>
+  </div>
+
+{% endblock %}
