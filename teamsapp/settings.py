@@ -220,7 +220,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_PROFILE_MODULE = 'uprofile.UProfile'
 
-SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
+SLACK_WEBHOOK = config('SLACK_WEBHOOK')
 SITE_URL = 'http://events.agilescientific.com'
 
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
