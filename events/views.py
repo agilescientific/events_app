@@ -8,6 +8,7 @@ from django.urls import reverse_lazy, reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
 User = get_user_model()
+import datetime
 
 from .models import Event, EventRegistration, Organization, Project, EventClass
 from .forms import OrganizationForm, ProjectForm, ImageUploadForm
@@ -22,6 +23,17 @@ class IndexView(ListView):
     template_name = "index.html"
     model = Event
     context_object_name = 'events'
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(IndexView, self).get_context_data(**kwargs)
+    #     now = datetime.datetime.now()
+    #     events = self.model.objects.all()
+    #     upcoming_e = events.filter(event_startdate__gte=now)
+    #     past_e = events.exclude(event_startdate__gte=now)
+    #     context['past_e'] = past_e
+    #     context['upcoming_e'] = upcoming_e    
+    #     print(upcoming_e)
+    #     return context
 
 class ForumView(LoginRequiredMixin, DetailView):
     template_name = "forum.html"

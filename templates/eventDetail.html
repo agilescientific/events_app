@@ -13,11 +13,14 @@
       </h1>
     </div>
     <div class="col-md-2 head-right">
+      {% now "U" as Unow %}
+      {% if Unow < object.event_startdate|date:"U" %}
       {% if object.canjoin %}
       {% if registered == False %}
         <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#joinModalCenter">
             Join
         </button>
+      {% endif %}
       {% endif %}
       {% endif %}
     </div>

@@ -108,3 +108,5 @@ ENV/
 /static_files
 
 *.bak
+
+/media
