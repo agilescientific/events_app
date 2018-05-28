@@ -176,7 +176,7 @@ DEFAULT_FROM_EMAIL = 'events@agilescientific.com'
 # Django Account email config.
 THEME_CONTACT_EMAIL = 'evetns@agilescientific.com'
 ACCOUNT_EMAIL_CONFIRMATION_EMAIL = True
-ACCOUNT_OPEN_SIGNUP = False
+ACCOUNT_OPEN_SIGNUP = True
 
 # URL Append slash
 APPEND_SLASH = True
