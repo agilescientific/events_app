@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'maintenance_mode',
     'events',
     'uprofile',
     'account',
@@ -74,6 +75,7 @@ MIDDLEWARE = [
     'account.middleware.LocaleMiddleware',
     'account.middleware.TimezoneMiddleware',
     'machina.apps.forum_permission.middleware.ForumPermissionMiddleware',
+    'maintenance_mode.middleware.MaintenanceModeMiddleware',
 ]
 
 ROOT_URLCONF = 'teamsapp.urls'
@@ -174,7 +176,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'events@agilescientific.com'
 
 # Django Account email config.
-THEME_CONTACT_EMAIL = 'evetns@agilescientific.com'
+THEME_CONTACT_EMAIL = 'events@agilescientific.com'
 ACCOUNT_EMAIL_CONFIRMATION_EMAIL = True
 ACCOUNT_OPEN_SIGNUP = True
 
@@ -230,3 +232,5 @@ SITE_URL = 'http://events.agilescientific.com'
 
 GH_ID = config('GH_ID')
 GH_SECRET = config('GH_SECRET')
+
+MAINTENANCE_MODE = False
