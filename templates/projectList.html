@@ -88,6 +88,12 @@
           </div>
         </div>
     </div>
+    {% empty %}
+    
+    <h5 class="head-pad">
+        No projects to show yet. <a href="/event/{{ event.slug }}">Join</a> the event to add one.
+    </h5>
+    
     {% endfor %}
   </div>
 
