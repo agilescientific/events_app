@@ -28,17 +28,20 @@
         <div class="container text-white">
         <h1>{{ event.event_title }}</h1>
         <p>
-        {% for s in event.sponsors.all %}
+        
+        {% regroup event.sponsors.all by tier as s_by_tier %}
+        {% for tier, sp in s_by_tier %}
             {% if forloop.first %}
             Sponsors:
             {% endif %}
-                <a class='text-white' href="{{ s.get_absolute_url }}">{{ s.name }}</a>
-                {% if not forloop.last %}
-                    -
-                {% endif %}
+                {% for s in sp %}
+                <a class='text-white' href="{{ s.sponsor.get_absolute_url }}">{{ s.sponsor.name }}</a> -
+                {% endfor %}
             
         {% empty %}
+    
         {% endfor %}
+
         </p>
         </div>
     </div>

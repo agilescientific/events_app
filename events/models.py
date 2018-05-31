@@ -78,7 +78,7 @@ class Event(models.Model):
     forum = models.ForeignKey('forum.Forum', related_name='event_forum',
                               on_delete=models.CASCADE, blank=True, null=True)
 
-    sponsors = models.ManyToManyField(Organization, blank=True)
+    sponsors = models.ManyToManyField('EventSponsorship', related_name="sponsor_list", blank=True)
 
     banner_img = models.ImageField(upload_to=logo_directory_path,  null=True, blank=True,
                                     default='http://placehold.it/1000x300')
@@ -86,6 +86,8 @@ class Event(models.Model):
     slug = models.SlugField(max_length=140, null=True)
     canjoin = models.NullBooleanField()
     hide = models.NullBooleanField()
+
+    slack_webhook = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.event_title
@@ -109,6 +111,16 @@ class Event(models.Model):
         if not self.slug:
             self.slug = self._get_unique_slug()
         super().save()
+
+class EventSponsorship(models.Model):
+    event = models.ForeignKey(Event, related_name='event_esponsored', on_delete=models.CASCADE)
+    sponsor = models.ForeignKey(Organization, related_name='sponsor_info', on_delete=models.CASCADE)
+    tier = models.CharField(max_length=100, null=True)
+    size = models.CharField(max_length=50, blank=True, null=True)
+    amount = models.CharField(max_length=20, blank=True, null=True)
+
+    def __str__(self):
+        return self.sponsor.name + " - " + self.event.event_title
 
 class EventRegistration(models.Model):
     event = models.ForeignKey(Event, related_name='event_info', on_delete=models.CASCADE)
