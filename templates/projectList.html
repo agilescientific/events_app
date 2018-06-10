@@ -25,11 +25,12 @@
         <div class="card-header" id="heading{{ forloop.counter }}">
           <div class="row">
 
-            <div class="col-md-4">
+            <div class="col-md-12">
               <h5 class="mb-0">
-                <button id="btn{{ forloop.counter }}" class="btn btn-dark" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
-                  {{ p.name }} <i id="arrow{{ forloop.counter }}" class="fas fa-arrow-circle-down"></i>
-                </button>
+                <a data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}" style="cursor: pointer;">
+                {{ p.name }}
+                <i id="arrow{{ forloop.counter }}" class="far fa-plus-square"></i>
+                </a>
               </h5>
             </div>
             {% if show %}
@@ -152,14 +153,14 @@
     $('#accordion').on('shown.bs.collapse', function (e) {
       var n = e.target.id.replace('collapse','')
       var arrelem = $.find('#arrow' + n);
-      $(arrelem).addClass('fa-arrow-circle-up');
-      $(arrelem).removeClass('fa-arrow-circle-down');
+      $(arrelem).addClass('far fa-minus-square');
+      $(arrelem).removeClass('far fa-plus-square');
     });
     $('#accordion').on('hide.bs.collapse', function (e) { 
       var n = e.target.id.replace('collapse','')
       var arrelem = $.find('#arrow' + n);
-      $(arrelem).removeClass('fa-arrow-circle-up');
-      $(arrelem).addClass('fa-arrow-circle-down');
+      $(arrelem).removeClass('far fa-minus-square');
+      $(arrelem).addClass('far fa-plus-square');
     });
   });
 </script>
