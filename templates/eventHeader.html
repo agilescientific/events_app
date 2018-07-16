@@ -35,7 +35,11 @@
             Sponsors:
             {% endif %}
                 {% for s in sp %}
-                <a class='text-white' href="{{ s.sponsor.get_absolute_url }}">{{ s.sponsor.name }}</a> -
+                <a class='text-white' href="{{ s.sponsor.get_absolute_url }}">{{ s.sponsor.name }}</a> 
+                {% if forloop.last %}
+                {% else %}
+                -
+                {% endif %}
                 {% endfor %}
             
         {% empty %}
