@@ -7,17 +7,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
-User = get_user_model()
+from machina.apps.forum.views import ForumView as BaseForumView
+from machina.apps.forum.views import Forum
 import datetime
-
 from .models import Event, EventRegistration, Organization, Project, EventClass
 from .forms import OrganizationForm, ProjectForm, ImageUploadForm
-
 from urllib.parse import urlparse
-
 from markdownx.utils import markdownify
 import requests
-# Create your views here.
+
+User = get_user_model()
 
 class IndexView(ListView):
     template_name = "index.html"
@@ -198,7 +197,7 @@ class CreateOrganizationView(FormView):
         context['creator'] = self.request.user
         return context
 
-def notify_slack(m, l=None):
+def notify_slack(m, l=None, swhook=settings.SLACK_WEBHOOK):
     """
     Setup webhook for Slack
     """
@@ -209,7 +208,7 @@ def notify_slack(m, l=None):
         message = m
 
     payload = {'text':message}
-    r = requests.post(settings.SLACK_WEBHOOK, json=payload)
+    r = requests.post(swhook, json=payload)
     print(r.text)
     
     return
@@ -227,7 +226,8 @@ class CreateProjectView(LoginRequiredMixin, FormView):
         if 'cancel' in self.request.POST:
             return HttpResponseRedirect(self.get_success_url())
 
-        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
+        event = Event.objects.get(slug = self.kwargs['slug'])
+        event_pk = event.id
         self.object = form.save(commit=False)
         self.object.creator = self.request.user
         self.object.event = Event.objects.get(id=event_pk)
@@ -237,7 +237,8 @@ class CreateProjectView(LoginRequiredMixin, FormView):
         # Slack notify:
         message = "Project *{}* was created.".format(self.object.name)
         link = settings.SITE_URL + "/project/{}".format(self.object.slug)
-        notify_slack(message, link)
+        swhook = event.slack_webhook
+        notify_slack(message, link, swhook)
         
         return super().form_valid(form)
 
@@ -399,9 +400,6 @@ class TermsView(TemplateView):
 
 class PrivacyView(TemplateView):
     template_name = 'privacy.html'
-
-from machina.apps.forum.views import ForumView as BaseForumView
-from machina.apps.forum.views import Forum
 
 class MForumView(BaseForumView):
 
