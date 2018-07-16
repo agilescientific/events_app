@@ -368,13 +368,12 @@ class GetGithubInfo(View):
                 
                 if repostr[-1]=='/': repostr[:-1]
 
-                issues_url = 'https://api.github.com/repos'+ repostr
+                repo_url = 'https://api.github.com/repos'+ repostr
                 
-                issues_r = requests.get(issues_url, json=payload)
+                issues_r = requests.get(repo_url, json=payload)
                 if issues_r.status_code == 200:
                     if issues_r.json()['has_issues']:
-                        payload = {'client_id':settings.GH_ID, 'client_secret':settings.GH_SECRET}
-                        issues_r = requests.get(issues_url+'/issues', json=payload)
+                        issues_r = requests.get(repo_url+'/issues', json=payload)
                         json_r = issues_r.json()
                     else:
                         json_r = {}
@@ -382,17 +381,20 @@ class GetGithubInfo(View):
                     json_r = {'error' : True}
 
                 headers = {'Accept':'application/vnd.github.v3.html+json'}
-                readme = requests.get(issues_url+'/readme', json=payload, headers=headers)
+                readme = requests.get(repo_url+'/readme', json=payload, headers=headers)
                 if readme.status_code == 200:
 
                     if type(json_r) == list:
                         json_r.append({'readme_html': readme.content.decode()})
                     else:
                         json_r['readme_html'] = readme.content.decode()
+
+                    contents_r = requests.get(repo_url+'/contents/', json=payload)
+                    contents_json = contents_r.json()
+                    json_r.append({'files': contents_json})
                 elif issues_r.status_code > 400:
                     json_r = {'error' : True}
 
-        #return HttpResponseRedirect('/project/{}'.format(slug))
         return JsonResponse(json_r, safe=False)
 
 class TermsView(TemplateView):

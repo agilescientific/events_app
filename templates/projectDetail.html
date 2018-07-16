@@ -63,7 +63,8 @@
             </div>
 
             {% if project.github %}
-            <h2 class="pddn-10-top"> Github <a href="{{ project.github }}">Repo</a> information </h2>
+            <h2 class="pddn-10-top"> Github repository </h2>
+            <small><a href="{{ project.github }}">{{ project.github }}</a></small>
             <hr>
             <input type="hidden" name="variable" value="{{ project.slug }}" readonly>
             
@@ -96,7 +97,7 @@
     var get_gh = '/project/' + $(document).find('input').val() + '/github';
 
     requestJSON(get_gh, function(json){
-      var outhtml = '';
+      var outhtml = '<ul class="list-group">';
       $.getJSON(get_gh, function(json){
         issues = json;
         outputIssueContent();
@@ -106,21 +107,26 @@
         if(issues.error){ $(repcontainer).html('<div class="col-12 text-center"> No Repo Found!</div>');}
         else {
           var i = 0;
-          $.each(issues, function(index) {
+          $.each(issues[issues.length-1].files, function(index) {
             i = i+1;
-            var cmt = issues[index];
-            if(cmt.state == 'open' && i<6) {
-              var odate = moment(cmt.created_at);
-              var now = moment();
-              var delta = moment.duration(now.diff(odate)).humanize();
-              outhtml = outhtml +
-                        '<li class="list-group-item list-group-item-success"><a href="'+cmt.html_url+'" target="_blank">' +
-                            '<small>' + cmt.title + '</a>' + '- ' + delta + ' ago' +
-                        ' - author: ' + cmt.user.login + '</small>' + '</li>'; }
+            var cmt = issues[issues.length-1].files[index];
+            
+            // var odate = moment(cmt.created_at);
+            // var now = moment();
+            // var delta = moment.duration(now.diff(odate)).humanize();
+            if(cmt.type=='file'){
+              var icon = '<i class="far fa-file-alt"></i>&nbsp'
+            }
+            else {
+              var icon = '<i class="far fa-folder-open"></i>&nbsp'
+            }
+            outhtml = outhtml +
+                      '<li class="list-group-item">' + icon + 
+                        '<a href="'+cmt.html_url+'" target="_blank">' + '<small>' + cmt.name + '</a>' + '</small>' + '</li>';
           });
           outhtml = outhtml + '</ul>';
           $(innelem).html(outhtml);
-          $(rdelem).html(issues[issues.length-1].readme_html);
+          $(rdelem).html(issues[issues.length-2].readme_html);
           }
         }
     });
