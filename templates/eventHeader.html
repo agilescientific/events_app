@@ -34,6 +34,7 @@
             {% if forloop.first %}
             Sponsors:
             {% endif %}
+            {% if forloop.last %}
                 {% for s in sp %}
                 <a class='text-white' href="{{ s.sponsor.get_absolute_url }}">{{ s.sponsor.name }}</a> 
                 {% if forloop.last %}
@@ -41,7 +42,11 @@
                 -
                 {% endif %}
                 {% endfor %}
-            
+            {% else %}
+                {% for s in sp %}
+                <a class='text-white' href="{{ s.sponsor.get_absolute_url }}">{{ s.sponsor.name }} -</a>
+                {% endfor %}
+            {% endif %}
         {% empty %}
     
         {% endfor %}
