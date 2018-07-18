@@ -11,7 +11,7 @@
         {% if Unow < e.event_enddate|date:"U" %}
 
             <!-- Page Heading -->
-            <h1 class="my-4 pddn-30-top pddn-20-bottom">Current Events
+            <h1 class="my-4 pddn-30-top pddn-20-bottom">Current events
             </h1>
 
           <!-- Event -->
@@ -35,7 +35,7 @@
   {% endfor %}
 
    <!-- Page Heading -->
-   <h1 class="my-4 pddn-30-top pddn-20-bottom">Upcoming Events
+   <h1 class="my-4 pddn-30-top pddn-20-bottom">Upcoming events
   </h1>
 
   {% for e in events %}
@@ -55,7 +55,7 @@
         <h3>{{ e.event_title }}</h3>
         <h4><small>{{ e.event_startdate|date:'D, N d, Y. P' }} - {{ e.event_enddate|date:'D, N d, Y. P' }}</small></h4>
         <p>{{ e.description_text|safe }}</p>
-        <a class="btn btn-primary" href="{{ e.get_absolute_url }}">View Event</a>
+        <a class="btn btn-primary" href="{{ e.get_absolute_url }}">View event</a>
       </div>
   </div>
   
@@ -66,7 +66,7 @@
   {% endfor %}
 
   <!-- Page Heading -->
-  <h1 class="my-4 pddn-30-top pddn-20-bottom">Past Events
+  <h1 class="my-4 pddn-30-top pddn-20-bottom">Past events
   </h1>
 
   {% for e in events reversed %}
@@ -83,7 +83,7 @@
         <h3>{{ e.event_title }}</h3>
         <h4><small>{{ e.event_startdate|date:'D, N d, Y. P' }} - {{ e.event_enddate|date:'D, N d, Y. P' }}</small></h4>
         <p>{{ e.description_text|safe }}</p>
-        <a class="btn btn-primary" href="{{ e.get_absolute_url }}">View Event</a>
+        <a class="btn btn-primary" href="{{ e.get_absolute_url }}">View event</a>
       </div>
   </div>
   
