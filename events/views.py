@@ -440,7 +440,13 @@ class IdeasView(DetailView):
 
     def get_context_data(self,**kwargs):
         context = super(IdeasView, self).get_context_data(**kwargs)
-        context['user'] = self.request.user.username
+        context['cuser'] = self.request.user
+        q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
+                                                     event_id = self.object.id))
+        if q_reg > 0:
+            context['registered'] = True
+        else:
+            context['registered'] = False
         context['current'] = 'ideas'
         context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).rules)
         return context

@@ -20,7 +20,7 @@
   </div>
 
   <input type="hidden" id="eslug" name="variable" value="{{ event.slug }}" readonly>
-  <input type="hidden" id="uname" name="variable" value="{{ user }}" readonly>
+  <input type="hidden" id="uname" name="variable" value="{{ cuser.username }}" readonly>
   <input type="hidden" id="csrfmiddlewaretoken" name="csrfmiddlewaretoken" value="{{ csrf_token }}" readonly>
   
             
@@ -38,32 +38,44 @@
 {% block scripts %}
 <script>
   function addVote(idea, i) {
-      var btn = $(document).find('#vup'+i);
-      var votes = $(document).find('#votes'+i);
-      var nvotes = parseInt(votes.text(), 10);
-      console.log(nvotes + 1);
-      votes.html(nvotes +1);
-      btn.addClass("unvote");
-      btn.removeClass("vote");
-      btn.attr('onclick','remVote("idea",'+i+')');
-      var purl = '/event/' + $(document).find('#eslug').val() + '/addvote_idea';
-      var csrf = $(document).find('#csrfmiddlewaretoken').val();
-      // alert(purl);
-      $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+      var uname = $(document).find('#uname').val();
+      if(uname){
+        var btn = $(document).find('#vup'+i);
+        var votes = $(document).find('#votes'+i);
+        var nvotes = parseInt(votes.text(), 10);
+        console.log(nvotes + 1);
+        votes.html(nvotes +1);
+        btn.addClass("unvote");
+        btn.removeClass("vote");
+        btn.attr('onclick','remVote("idea",'+i+')');
+        var purl = '/event/' + $(document).find('#eslug').val() + '/addvote_idea';
+        var csrf = $(document).find('#csrfmiddlewaretoken').val();
+        // alert(purl);
+        $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+      } else {
+        logurl = "/account/login?next="+'/event/'+$(document).find('#eslug').val()+'/ideas'
+        window.location.href = logurl;
+      }
   };
   function remVote(idea, i) {
-      var btn = $(document).find('#vup'+i);
-      var votes = $(document).find('#votes'+i);
-      nvotes = parseInt(votes.text(), 10);
-      console.log(nvotes - 1);
-      votes.html(nvotes - 1);
-      btn.addClass("vote");
-      btn.removeClass("unvote");
-      btn.attr('onclick', 'addVote("idea",'+i+')');
-      var purl = '/event/' + $(document).find('#eslug').val() + '/remvote_idea';
-      var csrf = $(document).find('#csrfmiddlewaretoken').val();
-      // alert(purl);
-      $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+      var uname = $(document).find('#uname').val();
+      if(uname){
+        var btn = $(document).find('#vup'+i);
+        var votes = $(document).find('#votes'+i);
+        nvotes = parseInt(votes.text(), 10);
+        console.log(nvotes - 1);
+        votes.html(nvotes - 1);
+        btn.addClass("vote");
+        btn.removeClass("unvote");
+        btn.attr('onclick', 'addVote("idea",'+i+')');
+        var purl = '/event/' + $(document).find('#eslug').val() + '/remvote_idea';
+        var csrf = $(document).find('#csrfmiddlewaretoken').val();
+        // alert(purl);
+        $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+      } else {
+        logurl = "/account/login?next="+'/event/'+$(document).find('#eslug').val()+'/ideas'
+        window.location.href = logurl;
+      }
   };
 
   $(document).ready(function(){
