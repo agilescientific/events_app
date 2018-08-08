@@ -7,6 +7,11 @@
         <a class="nav-link {% if current == 'projects' %}active{% endif %}" href="/event/{{ event.slug }}/projects">Projects</a>
     </li>
     {% endif %}
+    {% if event.need_ideas %}
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'ideas' %}active{% endif %}" href="/event/{{ event.slug }}/ideas">Ideas</a>
+    </li>
+    {% endif %}
     <li class="nav-item">
         <a class="nav-link {% if current == 'participants' %}active{% endif %}" href="/event/{{ event.slug }}/participants">Participants</a>
     </li>

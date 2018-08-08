@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+{% include "eventHeader.html" %}
+
+<div class="col-10 mx-auto">
+  <!-- Page Heading -->
+  <div class="row pddn-30-top pddn-20-bottom">
+    <div class="col-md-8">
+      <h3 class="head-pad">
+          Potential ideas for projects
+      </h3>
+    </div>
+    <div class="col-md-4 head-right">
+      {% if True %}
+        <a class="btn btn-success head-pad" href="/event/{{ event.slug }}/create_idea">Create Idea</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <input type="hidden" id="eslug" name="variable" value="{{ event.slug }}" readonly>
+  <input type="hidden" id="uname" name="variable" value="{{ user }}" readonly>
+            
+  <div id="ideacontainer" class="row ">
+    <div id="idea" class="col-lg-12 col-md-12 col-12 mx-auto"></div>
+  </div>
+
+</div>
+
+<div class="pddn-100-top"></div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function addVote() {
+      alert("I am an alert box!");
+    };
+  $(document).ready(function(){
+    var repcontainer = $(document).find('#ideacontainer');
+    var innelem = $(document).find('#idea');
+    $(innelem).html('<div id="loader" class="pddn-50-top"><img src="/static/img/loader.gif" alt="loading..."></div>');
+
+    var get_gh = '/event/' + $(document).find('#eslug').val() + '/getideas';
+    var uname = $(document).find('#uname').val();
+
+    requestJSON(get_gh, function(json){
+      var outhtml = '<table class="table">'+
+                      '<thead>'+
+                        '<tr>'+
+                          '<th scope="col">Idea</th>'+
+                          '<th scope="col">Votes</th>'+
+                        '</tr>'+
+                      '</thead>'+
+                      '<tbody>';
+      $.getJSON(get_gh, function(json){
+        ideas = json;
+        outputIssueContent();
+      });
+
+      function outputIssueContent() {
+        if(ideas.error){ $(repcontainer).html('<div class="col-12 text-center"> No ideas found!</div>');}
+        else {
+          var i = 0;
+          $.each(ideas, function(index) {
+            i = i+1;
+            var cmt = ideas[index];
+            
+            vbutton = '';
+            if(cmt.voters.indexOf(uname) < 0) {
+              vbutton = '&nbsp &nbsp <button onclick="addVote();">Vote</button>';
+            };
+
+            outhtml = outhtml +
+                      '<tr>'+
+                        '<th scope="row">'+
+                            '<a data-toggle="collapse" href="#collapse'+i+'" aria-expanded="false" aria-controls="collapse'+i+'">'+
+                            cmt.name+
+                            '</a>'+
+                            '&nbsp &nbsp'+
+                            '<small style="color: gray;"> by '+
+                              '<a style="color: gray;" href="/users/'+cmt.creator+'">'+cmt.creator+'</a>'+
+                            '</small>'+
+                            '<div class="collapse" id="collapse'+i+'">'+
+                              '<div class="card card-body">'+
+                                '<p id="idea-detail">'+cmt.detail+'</p>'+
+                              '</div>'+
+                            '</div>'+
+                        '</th>'+
+                        '<th>'+
+                          '<span class="badge badge-pill badge-info">'+ cmt.votes +'</span>'+
+                            vbutton+
+                        '</th>'+
+                      '</tr>'                      
+          });
+          outhtml = outhtml + '</tbody> </table>';
+          $(innelem).html(outhtml);
+          }
+        }
+    });
+
+
+    
+    function requestJSON(url, callback) {
+      $.ajax({
+        url: url,
+        complete: function(xhr) {
+          callback.call(null, xhr.responseJSON);
+        }
+      });
+    };
+
+  });
+</script>
+{% endblock %}

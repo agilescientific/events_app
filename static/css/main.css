@@ -21,6 +21,15 @@ body {
   }
 }
 
+#idea-detail {
+  font-size: 13px;
+  color:gray;
+}
+
+span.badge {
+  font-size: 14pt;
+}
+
 .head-pad {
   margin-top: 1.5rem !important;
   margin-bottom: 1.5rem !important;

@@ -10,11 +10,17 @@ from django.contrib.auth import get_user_model
 from machina.apps.forum.views import ForumView as BaseForumView
 from machina.apps.forum.views import Forum
 import datetime
-from .models import Event, EventRegistration, Organization, Project, EventClass
-from .forms import OrganizationForm, ProjectForm, ImageUploadForm
+from .models import Event, EventRegistration, Organization, Project, EventClass, Idea
+from .forms import OrganizationForm, ProjectForm, ImageUploadForm, IdeaForm
 from urllib.parse import urlparse
 from markdownx.utils import markdownify
 import requests
+import json
+
+# Getting ready for JS frontend
+from django.core import serializers
+from rest_framework import viewsets
+from .serializers import IdeaSerializer, EventSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -317,7 +323,6 @@ class ProjectDeleteView(DeleteView):
         proj = Project.objects.get(slug=self.kwargs['slug'])
         event = Event.objects.get(id = proj.event_id)
         context['event'] = event
-        eslug = event.slug
         context['eslug'] = self.kwargs['slug']
         return context
 
@@ -427,3 +432,105 @@ class RulesView(DetailView):
         context['current'] = 'rules'
         context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).rules)
         return context
+
+class IdeasView(DetailView):
+    template_name = "ideaList.html"
+    model = Event
+    context_object_name = 'event'
+
+    def get_context_data(self,**kwargs):
+        context = super(IdeasView, self).get_context_data(**kwargs)
+        context['user'] = self.request.user.username
+        context['current'] = 'ideas'
+        context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).rules)
+        return context
+
+class CreateIdeaView(LoginRequiredMixin, FormView):
+    template_name = 'ideaRegistration.html'
+    model = Idea
+    form_class = IdeaForm
+    success_url = '/'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        self.success_url = '/event/{}/ideas'.format(self.kwargs['slug'])
+        if 'cancel' in self.request.POST:
+            return HttpResponseRedirect(self.get_success_url())
+
+        event = Event.objects.get(slug = self.kwargs['slug'])
+        self.object = form.save(commit=False)
+        self.object.creator = self.request.user
+        self.object.event = event
+        self.object.save(commit=True)
+
+        # Slack notify:
+        message = "Idea *{}* was created.".format(self.object.name)
+        link = settings.SITE_URL + '/event/{}/ideas'.format(self.kwargs['slug'])
+        # swhook = event.slack_webhook
+        swhook = "https://hooks.slack.com/services/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"
+        # notify_slack(message, link, swhook)
+        
+        return super().form_valid(form)
+
+    def get_context_data(self,**kwargs):
+        context = super(CreateIdeaView, self).get_context_data(**kwargs)
+        context['event'] = Event.objects.get(slug = self.kwargs['slug'])
+        context['creator'] = self.request.user
+        return context
+
+class GetIdeas(View):
+
+    def get(self, request, slug):
+        if request.method == 'GET':
+            json_r = []
+            event = get_object_or_404(Event, slug=self.kwargs['slug'])
+            ideas = Idea.objects.filter(event = event.id).order_by('-votes')
+            query_dict = json.loads(serializers.serialize("json", ideas))
+            # query_dict = []
+
+            for i in ideas:
+                idea = {}
+                idea["name"] = i.name
+                idea["detail"] = i.detail
+                idea["event"] = i.event.slug
+                idea["creator"] = i.creator.username
+                idea["votes"] = i.votes
+                idea["voters"] = [v.username for v in i.voters.all()]
+                idea["comments"] = [c.content for c in i.comments.all()]
+                json_r.append(idea)
+
+            return HttpResponse(json.dumps(json_r), content_type='application/json')
+
+class VoteIdea(View, LoginRequiredMixin):
+
+    def post(self, request, slug):
+        success_url = '/event/{}/ideas'.format(self.kwargs['slug'])
+
+        if request.method == 'POST':
+            if 'name' in request.POST:
+                idea = get_object_or_404(Idea, name=request.name)
+                print(idea)
+
+        return HttpResponseRedirect(success_url)
+
+class IdeaViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Ideas to be viewed or edited.
+    """
+    queryset = Idea.objects.all().order_by('votes')
+    serializer_class = IdeaSerializer
+
+class EventViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Events to be viewed or edited.
+    """
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Users to be viewed or edited.
+    """
+    queryset = User.objects.all()
+    serializer_class = EventSerializer

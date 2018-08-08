@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from .models import Organization, Project
+from .models import Organization, Project, Idea
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
@@ -75,6 +75,36 @@ class ProjectForm(forms.ModelForm):
                             FormActions(
                                 Submit('save_changes', 'Save', css_class="btn-primary"),
                                 HTML("<a class='btn' href='{% url 'event-projects' slug=event.slug %}' role='button'>Cancel</a>")
+                            )
+                          )
+
+class IdeaForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(IdeaForm, self).__init__(*args, **kwargs)
+        self.fields['detail'].label = "Markdown Description (500 characters)"
+
+    class Meta:
+        model = Idea
+        fields = ['name', 'detail']
+        # labels = ['Name', 'Members', 'Short Description', 'Long Description (Markdown)', 'resources', 'URL to Github Repo']
+
+        widgets = {
+          'detail': forms.Textarea(attrs={'rows':4, 'cols':15}),
+        }
+
+    name = forms.CharField(label='Title')
+    detail = MarkdownxFormField()
+
+    # Uni-form
+    helper = FormHelper()
+    helper.form_class = 'form-horizontal'
+    helper.layout = Layout(
+                            Field('name', css_class='input-xlarge'),
+                            Field('detail', style='width:100%;'),
+                            FormActions(
+                                Submit('save_changes', 'Save', css_class="btn-primary"),
+                                HTML("<a class='btn' href='{% url 'event-ideas' slug=event.slug %}' role='button'>Cancel</a>")
                             )
                           )
 

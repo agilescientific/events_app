@@ -84,6 +84,7 @@ class Event(models.Model):
                                     default='http://placehold.it/1000x300')
 
     slug = models.SlugField(max_length=140, null=True)
+    need_ideas = models.NullBooleanField()
     canjoin = models.NullBooleanField()
     hide = models.NullBooleanField()
 
@@ -134,7 +135,6 @@ class Project(models.Model):
     name = models.CharField(max_length=100)
     detail_small = models.TextField(max_length=200, default="", verbose_name='Description')
     detail_long = MarkdownxField(max_length=2000, default="", verbose_name='Long Description')
-    # detail_long = models.TextField(max_length=1000, default="", verbose_name='Long Description')
     main_url = models.CharField(max_length=100, default='', null=True, blank=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     creator = models.ForeignKey(User, related_name='projectCreator', on_delete=models.CASCADE)
@@ -158,6 +158,50 @@ class Project(models.Model):
         unique_slug = slug
         num = 1
         while Project.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
+ 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super().save()
+
+class IdeaComment(models.Model):
+    parentIdea = models.ForeignKey('Idea', on_delete=models.CASCADE)
+    content = MarkdownxField(max_length=500, default="", verbose_name='Comment')
+    author = models.ForeignKey(User, related_name='commentAuthor', on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, related_name='commentEvent', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.parentIdea.name + " - " + self.event.event_title
+
+class Idea(models.Model):
+    name = models.CharField(max_length=100)
+    detail = MarkdownxField(max_length=500, default="", verbose_name='Description')
+    main_url = models.CharField(max_length=100, default='', null=True, blank=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, related_name='ideaCreator', on_delete=models.CASCADE)
+    votes = models.BigIntegerField(default=0, blank=True)
+    voters = models.ManyToManyField(User, blank=True)
+    slug = models.SlugField(max_length=140, null=True)
+    tags = TaggableManager(verbose_name='ideaTags', blank=True)
+    comments = models.ManyToManyField(IdeaComment, blank=True)
+
+    def __str__(self):
+        return self.name + " - " + self.event.event_title
+
+    def get_absolute_url(self):
+        """
+        Returns the url to access a particular team instance.
+        """
+        return reverse('idea-detail', args=[str(self.slug)])
+
+    def _get_unique_slug(self):
+        slug = slugify(self.name)
+        unique_slug = slug
+        num = 1
+        while Idea.objects.filter(slug=unique_slug).exists():
             unique_slug = '{}-{}'.format(slug, num)
             num += 1
         return unique_slug

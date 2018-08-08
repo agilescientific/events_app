@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "eventHeader.html" %}
+
+
+<div class="row">
+    <!-- Page Heading -->
+    <div class="col-md-8 mx-auto">
+        <h3 class="my-4 pddn-30-top pddn-20-bottom">Create idea</h3>
+    </div>
+</div>
+<div class="row pddn-30-top">
+    <div class="col-md-8 mx-auto">
+            <div class="form-group">
+                <label class="form-control-label">
+                    Creator
+                </label>
+                <div class="">
+                    <input name="creator" class="form-control" required="" id="creator" value="{{ creator.username }}"  disabled>
+                </div>
+            </div>
+        {{ form.media }}
+        {% crispy form %}
+    </div>
+</div>
+{% endblock %}
