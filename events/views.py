@@ -479,6 +479,90 @@ class CreateIdeaView(LoginRequiredMixin, FormView):
         context['creator'] = self.request.user
         return context
 
+class IdeaDetailView(DetailView):
+    template_name = "ideaDetail.html"
+    model = Idea
+    context_object_name = 'idea'
+
+    def get_context_data(self,**kwargs):
+        context = super(IdeaDetailView, self).get_context_data(**kwargs)
+        context['event'] = Event.objects.get(id = context['idea'].event.id)
+        context['html_body'] = markdownify(self.object.detail)
+
+        return context
+
+class IdeaEditView(LoginRequiredMixin, FormView):
+    template_name = 'ideaEdit.html'
+    model = Idea
+    form_class = IdeaForm
+    success_url = '/'
+    context_object_name = 'idea'
+
+    def get_form(self, form_class=form_class):
+        """
+        Check if the user has already filled in the form.
+        If so, then show the form populated with those answers,
+        to let user change them.
+        """
+        idea = get_object_or_404(Idea, creator=self.request.user, slug=self.kwargs['slug'])
+        return form_class(instance=idea, **self.get_form_kwargs())
+        # try:
+        #     project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
+        #     return form_class(instance=project, **self.get_form_kwargs())
+        # except Project.DoesNotExist:
+        #     return form_class(**self.get_form_kwargs())
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        idea = Idea.objects.get(slug=self.kwargs['slug'])
+        event = Event.objects.get(id = idea.event_id)
+        self.object = form.save(commit=False)
+        self.object.creator = self.request.user
+        self.object.event = event
+        self.object.save()
+
+        self.success_url = '/idea/{}'.format(self.kwargs['slug'])
+        return super().form_valid(form)
+
+    def get_context_data(self,**kwargs):
+        context = super(IdeaEditView, self).get_context_data(**kwargs)
+        idea = Idea.objects.get(slug=self.kwargs['slug'])
+        events = Event.objects.filter(id = idea.event_id)
+        if (len(events)>0):
+            context['event'] = events[0]
+        context['creator'] = self.request.user
+        context['islug'] = self.kwargs['slug']
+        return context
+
+class IdeaDeleteView(DeleteView):
+    """
+    Sub-class the DeleteView to restrict a User from deleting other 
+    user's data.
+    """
+    template_name = 'ideaDelete.html'
+    model = Idea
+    success_message = "Deleted Successfully"
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(IdeaDeleteView, self).get_object()
+        if not obj.creator == self.request.user:
+            raise Http404
+        return obj
+
+    def get_success_url(self):
+        eslug = Event.objects.get(id = self.object.event_id).slug
+        return reverse('event-ideas', kwargs={'slug':eslug})
+
+    def get_context_data(self,**kwargs):
+        context = super(IdeaDeleteView, self).get_context_data(**kwargs)
+        idea = Idea.objects.get(slug=self.kwargs['slug'])
+        event = Event.objects.get(id = idea.event_id)
+        context['event'] = event
+        context['eslug'] = self.kwargs['slug']
+        return context
+
 class GetIdeas(View):
 
     def get(self, request, slug):
@@ -499,6 +583,7 @@ class GetIdeas(View):
                 idea["votes"] = i.votes
                 idea["voters"] = [v.username for v in i.voters.all()]
                 idea["comments"] = [c.content for c in i.comments.all()]
+                idea["get_absolute_url"] = "/idea/"+i.slug
                 json_r.append(idea)
 
             return HttpResponse(json.dumps(json_r), content_type='application/json')

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+{% include "eventHeader.html" %}
+
+<!-- <div class="row">
+    <div class="col-md-8 mx-auto text-center">
+        <form action="" method="post">{% csrf_token %}
+            <p>Are you sure you want to delete "{{ object }}"?</p>
+            <input type="submit" value="Confirm" />
+        </form>
+    </div>
+</div> -->
+
+<div class="row pddn-30-top">
+    <div class="col-md-8 mx-auto text-center">
+        <h2>Remove Idea</h2>
+
+        <h4 class="pddn-30-top pddn-30-btm">Are you sure you want to delete <strong>{{ object.name }}</strong>?</h4>
+
+        <form action="{% url 'idea-delete' slug=object.slug %}" method="POST">
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a class="btn btn-default" href="{% url 'event-ideas' slug=event.slug %}">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

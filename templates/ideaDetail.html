@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+{% include "eventHeader.html" %}
+
+<div class="container pddn-30-top">
+<div class="row pddn-10-top">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-9">
+              <p class="card-text"><small class="text-muted">
+                  Creator: <a href="/users/{{ project.creator }}"> {{ idea.creator }}</a>
+              </small></p>
+            </div>
+            <div class="col-3 text-center">
+                {% if user.is_authenticated %}
+                  {% if user.username|safe == idea.creator|safe %}
+                    <a href="/idea/{{ idea.slug }}/edit"class="btn btn-warning btn-sm" role="button"> Edit Idea</a>
+                  {% endif %}
+                {% endif %}
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="col-md-12">
+                <div class="jumbotron">
+                  <h2>
+                    <a href={{ idea.get_absolute_url }}>{{ idea.name }}</a>
+                  </h2>
+                  <p>
+                      {{ html_body|safe }}
+                  </p>
+
+                </div>
+            </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pddn-100-top"></div>
+
+{% endblock %}
+
+{% block scripts %} 
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "eventHeader.html" %}
+
+<div class="row">
+    <!-- Page Heading -->
+    <div class="col-md-8 mx-auto">
+        <h3 class="my-4 pddn-30-top pddn-20-bottom">Idea Editor</h3>
+    </div>
+</div>
+<div class="row pddn-30-top">
+    <div class="col-md-8 mx-auto">
+            <div class="form-group">
+                <label class="form-control-label">
+                    Creator
+                </label>
+                <div class="">
+                    <input name="creator" class="form-control" required="" id="creator" value="{{ creator.username }}"  disabled>
+                </div>
+            </div>
+        {{ form.media }}
+        {% crispy form %}
+        <!-- <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModalCenter">Delete</button> -->
+        <a class="btn btn-danger" href="{% url 'idea-delete' slug=islug %}">Delete</a>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModalCenter" tabindex="-1" role="dialog" aria-labelledby="deleteModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLongTitle">Remove idea</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            Is this a good idea? There's no way back!
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-danger" href="{% url 'idea-delete' slug=islug %}">Accept</a>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
