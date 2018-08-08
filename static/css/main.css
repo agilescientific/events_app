@@ -23,7 +23,16 @@ body {
 
 #idea-detail {
   font-size: 13px;
+  font-weight: 400;
   color:gray;
+}
+
+.vote {
+  color: #999;
+}
+
+.unvote{
+  color: blue;
 }
 
 span.badge {

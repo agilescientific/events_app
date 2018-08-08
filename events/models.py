@@ -178,6 +178,7 @@ class IdeaComment(models.Model):
 
 class Idea(models.Model):
     name = models.CharField(max_length=100)
+    detail_short = models.CharField(max_length=200, default="", verbose_name='Short description')
     detail = MarkdownxField(max_length=500, default="", verbose_name='Description')
     main_url = models.CharField(max_length=100, default='', null=True, blank=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)

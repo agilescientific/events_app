@@ -86,7 +86,7 @@ class IdeaForm(forms.ModelForm):
 
     class Meta:
         model = Idea
-        fields = ['name', 'detail']
+        fields = ['name', 'detail_short', 'detail']
         # labels = ['Name', 'Members', 'Short Description', 'Long Description (Markdown)', 'resources', 'URL to Github Repo']
 
         widgets = {
@@ -94,6 +94,7 @@ class IdeaForm(forms.ModelForm):
         }
 
     name = forms.CharField(label='Title')
+    detail_short = forms.CharField(label='Short description')
     detail = MarkdownxFormField()
 
     # Uni-form
@@ -101,6 +102,7 @@ class IdeaForm(forms.ModelForm):
     helper.form_class = 'form-horizontal'
     helper.layout = Layout(
                             Field('name', css_class='input-xlarge'),
+                            Field('detail_short', style='width:100%;'),
                             Field('detail', style='width:100%;'),
                             FormActions(
                                 Submit('save_changes', 'Save', css_class="btn-primary"),

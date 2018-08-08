@@ -492,6 +492,7 @@ class GetIdeas(View):
             for i in ideas:
                 idea = {}
                 idea["name"] = i.name
+                idea["detail_short"] = i.detail_short
                 idea["detail"] = i.detail
                 idea["event"] = i.event.slug
                 idea["creator"] = i.creator.username
@@ -502,14 +503,32 @@ class GetIdeas(View):
 
             return HttpResponse(json.dumps(json_r), content_type='application/json')
 
-class VoteIdea(View, LoginRequiredMixin):
+class AddVoteIdea(View, LoginRequiredMixin):
 
     def post(self, request, slug):
         success_url = '/event/{}/ideas'.format(self.kwargs['slug'])
 
         if request.method == 'POST':
             if 'name' in request.POST:
-                idea = get_object_or_404(Idea, name=request.name)
+                idea = get_object_or_404(Idea, name=request.POST['name'])
+                idea.votes = idea.votes + 1
+                idea.voters.add(self.request.user)
+                idea.save()
+                print(idea)
+
+        return HttpResponseRedirect(success_url)
+
+class RemVoteIdea(View, LoginRequiredMixin):
+
+    def post(self, request, slug):
+        success_url = '/event/{}/ideas'.format(self.kwargs['slug'])
+
+        if request.method == 'POST':
+            if 'name' in request.POST:
+                idea = get_object_or_404(Idea, name=request.POST['name'])
+                idea.votes = idea.votes - 1
+                idea.voters.remove(self.request.user)
+                idea.save()
                 print(idea)
 
         return HttpResponseRedirect(success_url)

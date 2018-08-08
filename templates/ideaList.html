@@ -21,6 +21,8 @@
 
   <input type="hidden" id="eslug" name="variable" value="{{ event.slug }}" readonly>
   <input type="hidden" id="uname" name="variable" value="{{ user }}" readonly>
+  <input type="hidden" id="csrfmiddlewaretoken" name="csrfmiddlewaretoken" value="{{ csrf_token }}" readonly>
+  
             
   <div id="ideacontainer" class="row ">
     <div id="idea" class="col-lg-12 col-md-12 col-12 mx-auto"></div>
@@ -35,9 +37,35 @@
 
 {% block scripts %}
 <script>
-  function addVote() {
-      alert("I am an alert box!");
-    };
+  function addVote(idea, i) {
+      var btn = $(document).find('#vup'+i);
+      var votes = $(document).find('#votes'+i);
+      var nvotes = parseInt(votes.text(), 10);
+      console.log(nvotes + 1);
+      votes.html(nvotes +1);
+      btn.addClass("unvote");
+      btn.removeClass("vote");
+      btn.attr('onclick','remVote("idea",'+i+')');
+      var purl = '/event/' + $(document).find('#eslug').val() + '/addvote_idea';
+      var csrf = $(document).find('#csrfmiddlewaretoken').val();
+      // alert(purl);
+      $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+  };
+  function remVote(idea, i) {
+      var btn = $(document).find('#vup'+i);
+      var votes = $(document).find('#votes'+i);
+      nvotes = parseInt(votes.text(), 10);
+      console.log(nvotes - 1);
+      votes.html(nvotes - 1);
+      btn.addClass("vote");
+      btn.removeClass("unvote");
+      btn.attr('onclick', 'addVote("idea",'+i+')');
+      var purl = '/event/' + $(document).find('#eslug').val() + '/remvote_idea';
+      var csrf = $(document).find('#csrfmiddlewaretoken').val();
+      // alert(purl);
+      $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+  };
+
   $(document).ready(function(){
     var repcontainer = $(document).find('#ideacontainer');
     var innelem = $(document).find('#idea');
@@ -68,9 +96,12 @@
             i = i+1;
             var cmt = ideas[index];
             
-            vbutton = '';
+            var vbutton = '';
             if(cmt.voters.indexOf(uname) < 0) {
-              vbutton = '&nbsp &nbsp <button onclick="addVote();">Vote</button>';
+              var vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb vote" href="#/" onclick="addVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
+            }
+            else {
+              vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb unvote" href="#/" onclick="remVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
             };
 
             outhtml = outhtml +
@@ -83,14 +114,14 @@
                             '<small style="color: gray;"> by '+
                               '<a style="color: gray;" href="/users/'+cmt.creator+'">'+cmt.creator+'</a>'+
                             '</small>'+
-                            '<div class="collapse" id="collapse'+i+'">'+
+                            '<div class="" id="collapse'+i+'">'+
                               '<div class="card card-body">'+
-                                '<p id="idea-detail">'+cmt.detail+'</p>'+
+                                '<p id="idea-detail">'+cmt.detail_short+'</p>'+
                               '</div>'+
                             '</div>'+
                         '</th>'+
                         '<th>'+
-                          '<span class="badge badge-pill badge-info">'+ cmt.votes +'</span>'+
+                          '<span id="votes'+i+'" class="badge badge-pill badge-info">'+ cmt.votes +'</span>'+
                             vbutton+
                         '</th>'+
                       '</tr>'                      
