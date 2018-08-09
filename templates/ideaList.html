@@ -53,7 +53,7 @@
         // alert(purl);
         $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
       } else {
-        logurl = "/account/login?next="+'/event/'+$(document).find('#eslug').val()+'/ideas'
+        logurl = "/account/login?next="+'/event/'+$(document).find('#eslug').val()+'/ideas';
         window.location.href = logurl;
       }
   };
@@ -67,13 +67,13 @@
         votes.html(nvotes - 1);
         btn.addClass("vote");
         btn.removeClass("unvote");
-        btn.attr('onclick', 'addVote("idea",'+i+')');
+        btn.attr('onclick', 'addVote("'+idea+'",'+i+')');
         var purl = '/event/' + $(document).find('#eslug').val() + '/remvote_idea';
         var csrf = $(document).find('#csrfmiddlewaretoken').val();
         // alert(purl);
         $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
       } else {
-        logurl = "/account/login?next="+'/event/'+$(document).find('#eslug').val()+'/ideas'
+        logurl = "/account/login?next="+'/event/'+$(document).find('#eslug').val()+'/ideas';
         window.location.href = logurl;
       }
   };
@@ -110,7 +110,7 @@
             
             var vbutton = '';
             if(cmt.voters.indexOf(uname) < 0) {
-              var vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb vote" href="#/" onclick="addVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
+              vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb vote" href="#/" onclick="addVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
             }
             else {
               vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb unvote" href="#/" onclick="remVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';

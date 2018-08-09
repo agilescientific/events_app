@@ -12,8 +12,9 @@
         <div class="card-body">
           <div class="row">
             <div class="col-sm-2 text-center">
-              <h5>{{ idea.votes }}</h5>
+              <h5 id="votes">{{ idea.votes }}</h5>
               <h5>Votes</h5>
+              <a id="vup" class="thumb vote" href="#/" onclick="addVote('{{ idea.name }}', 0)"><i class="fas fa-thumbs-up fa-2x "></i></a>
             </div>
             <div class="col-sm-10">
                   <h2>
@@ -45,7 +46,9 @@
               <div class="form-group">
                 <label for="inputlg">Comment as <a class="text-muted" href="/users/{{ user.username }}"> {{ user.username }}</a>:</label>
                 <input id="comment" class="form-control input-lg" id="inputlg" type="text">
+                <input type="hidden" id="voters" name="variable" value="{{ idea.voters }}" readonly>
                 <input type="hidden" id="islug" name="variable" value="{{ idea.slug }}" readonly>
+                <input type="hidden" id="eslug" name="variable" value="{{ idea.event.slug }}" readonly>
                 <input type="hidden" id="uname" name="variable" value="{{ user.username }}" readonly>
                 <input type="hidden" id="csrfmiddlewaretoken" name="csrfmiddlewaretoken" value="{{ csrf_token }}" readonly>
               </div>
@@ -127,9 +130,63 @@
         });
     }
   }
+  function addVote(idea, i) {
+      var uname = $(document).find('#uname').val();
+      if(uname){
+        var btn = $(document).find('#vup');
+        var votes = $(document).find('#votes');
+        var nvotes = parseInt(votes.text(), 10);
+        console.log(nvotes + 1);
+        votes.html(nvotes +1);
+        btn.addClass("unvote");
+        btn.removeClass("vote");
+        btn.attr('onclick','remVote("idea",'+i+')');
+        var purl = '/event/' + $(document).find('#eslug').val() + '/addvote_idea';
+        var csrf = $(document).find('#csrfmiddlewaretoken').val();
+        // alert(purl);
+        $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+      } else {
+        logurl = "/account/login?next="+'/idea/'+$(document).find('#islug').val();
+        window.location.href = logurl;
+      }
+  };
+  function remVote(idea, i) {
+      var uname = $(document).find('#uname').val();
+      if(uname){
+        var btn = $(document).find('#vup');
+        var votes = $(document).find('#votes');
+        nvotes = parseInt(votes.text(), 10);
+        console.log(nvotes - 1);
+        votes.html(nvotes - 1);
+        btn.addClass("vote");
+        btn.removeClass("unvote");
+        btn.attr('onclick', 'addVote("'+idea+'",0)');
+        var purl = '/event/' + $(document).find('#eslug').val() + '/remvote_idea';
+        var csrf = $(document).find('#csrfmiddlewaretoken').val();
+        // alert(purl);
+        $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
+      } else {
+        logurl = "/account/login?next="+'/idea/'+$(document).find('#islug').val();
+        window.location.href = logurl;
+      }
+  };
   $(document).ready(function(){
     var btn = $(document).find("#commentbtn");
     btn.attr('onclick', 'postcomment()');
+    var voters = "{% for u in idea.voters.all%}{{ u.username }},{% endfor %}".split(",").slice(0,-1);
+    var thumbbtn = $(document).find('#vup');
+    var idea = "{{ idea.name }}"
+    if(voters.indexOf("{{ user.username }}") < 0) {
+      thumbbtn.addClass("vote");
+      thumbbtn.removeClass("unvote");
+      thumbbtn.attr('onclick', 'addVote("'+idea+'",0)');
+    }
+    else {
+      thumbbtn.addClass("unvote");
+      thumbbtn.removeClass("vote");
+      thumbbtn.attr('onclick', 'remVote("'+idea+'",0)');
+    };
+    console.log(voters.indexOf('frequency'));
   });
 </script> 
 {% endblock %}
