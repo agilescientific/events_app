@@ -172,7 +172,8 @@ class IdeaComment(models.Model):
     content = MarkdownxField(max_length=500, default="", verbose_name='Comment')
     author = models.ForeignKey(User, related_name='commentAuthor', on_delete=models.CASCADE)
     event = models.ForeignKey(Event, related_name='commentEvent', on_delete=models.CASCADE)
-
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return self.parentIdea.name + " - " + self.event.event_title
 

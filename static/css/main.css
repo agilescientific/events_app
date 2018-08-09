@@ -21,6 +21,10 @@ body {
   }
 }
 
+#input.comment{
+  width: 100%;
+}
+
 #idea-detail {
   font-size: 13px;
   font-weight: 400;

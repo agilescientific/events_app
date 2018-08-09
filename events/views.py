@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from machina.apps.forum.views import ForumView as BaseForumView
 from machina.apps.forum.views import Forum
 import datetime
-from .models import Event, EventRegistration, Organization, Project, EventClass, Idea
+from .models import Event, EventRegistration, Organization, Project, EventClass, Idea, IdeaComment
 from .forms import OrganizationForm, ProjectForm, ImageUploadForm, IdeaForm
 from urllib.parse import urlparse
 from markdownx.utils import markdownify
@@ -512,11 +512,6 @@ class IdeaEditView(LoginRequiredMixin, FormView):
         """
         idea = get_object_or_404(Idea, creator=self.request.user, slug=self.kwargs['slug'])
         return form_class(instance=idea, **self.get_form_kwargs())
-        # try:
-        #     project = Project.objects.get(creator=self.request.user, id=self.kwargs['pk'])
-        #     return form_class(instance=project, **self.get_form_kwargs())
-        # except Project.DoesNotExist:
-        #     return form_class(**self.get_form_kwargs())
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
@@ -589,10 +584,71 @@ class GetIdeas(View):
                 idea["votes"] = i.votes
                 idea["voters"] = [v.username for v in i.voters.all()]
                 idea["comments"] = [c.content for c in i.comments.all()]
+                print(idea["comments"])
                 idea["get_absolute_url"] = "/idea/"+i.slug
                 json_r.append(idea)
 
             return HttpResponse(json.dumps(json_r), content_type='application/json')
+
+class PostCommentIdea(View, LoginRequiredMixin):
+
+    def post(self, request, slug):
+        success_url = '/idea/{}'.format(self.kwargs['slug'])
+
+        if request.method == 'POST':
+            if 'idea' in request.POST:
+                idea = Idea.objects.get(slug=self.kwargs['slug'])
+                comment = IdeaComment()
+                comment.author = self.request.user
+                comment.content = request.POST['comment']
+                comment.parentIdea = idea
+                comment.event = idea.event
+                comment.save()
+                idea.comments.add(comment)
+                idea.save()
+
+        return HttpResponseRedirect(success_url)
+
+class CommentDeleteView(DeleteView):
+    """
+    Sub-class the DeleteView to restrict a User from deleting other 
+    user's data.
+    """
+    template_name = 'commentDelete.html'
+    model = IdeaComment
+    success_message = "Deleted Successfully"
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(CommentDeleteView, self).get_object()
+        if not obj.author == self.request.user:
+            raise Http404
+        return obj
+
+    def get_success_url(self):
+        eslug = Event.objects.get(id = self.object.event_id).slug
+        return reverse('idea-detail', kwargs={'slug':self.kwargs['slug']})
+
+    def get_context_data(self,**kwargs):
+        context = super(CommentDeleteView, self).get_context_data(**kwargs)
+        idea = Idea.objects.get(slug=self.kwargs['slug'])
+        event = Event.objects.get(id = idea.event_id)
+        context['event'] = event
+        context['eslug'] = self.kwargs['slug']
+        return context
+
+class DeleteCommentIdea(View, LoginRequiredMixin):
+
+    def put(self, request, slug):
+        success_url = '/idea/{}'.format(self.kwargs['slug'])
+
+        if request.method == 'POST':
+            if 'idea' in request.POST:
+                idea = Idea.objects.get(slug=self.kwargs['slug'])
+                comment = get_object_or_404(IdeaComment, parentIdea=idea)
+                comment.delete()
+
+        return HttpResponseRedirect(success_url)
 
 class AddVoteIdea(View, LoginRequiredMixin):
 
@@ -605,7 +661,6 @@ class AddVoteIdea(View, LoginRequiredMixin):
                 idea.votes = idea.votes + 1
                 idea.voters.add(self.request.user)
                 idea.save()
-                print(idea)
 
         return HttpResponseRedirect(success_url)
 
