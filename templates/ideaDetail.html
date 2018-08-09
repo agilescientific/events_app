@@ -33,8 +33,8 @@
                   <p class="text-muted"><small>
                       <i class="far fa-comment-alt"></i> &nbsp;
                       {{ idea.comments.all|length }} Comments &nbsp; &nbsp;
-                      <i class="far fa-share-square"></i> &nbsp;
-                      Share
+                      <!-- <i class="far fa-share-square"></i> &nbsp;
+                      Share -->
                   </small></p>
 
             </div>
@@ -146,7 +146,7 @@
         // alert(purl);
         $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
       } else {
-        logurl = "/account/login?next="+'/idea/'+$(document).find('#islug').val();
+        logurl = "/account/login?next="+'/idea/{{ idea.slug }}';
         window.location.href = logurl;
       }
   };
@@ -166,7 +166,7 @@
         // alert(purl);
         $.post(purl, { name: idea, 'csrfmiddlewaretoken':csrf} );
       } else {
-        logurl = "/account/login?next="+'/idea/'+$(document).find('#islug').val();
+        logurl = "/account/login?next="+'/idea/{{ idea.slug }}';
         window.location.href = logurl;
       }
   };

@@ -473,9 +473,9 @@ class CreateIdeaView(LoginRequiredMixin, FormView):
         # Slack notify:
         message = "Idea *{}* was created.".format(self.object.name)
         link = settings.SITE_URL + '/event/{}/ideas'.format(self.kwargs['slug'])
-        # swhook = event.slack_webhook
-        swhook = "https://hooks.slack.com/services/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"
-        # notify_slack(message, link, swhook)
+        swhook = event.slack_webhook
+        # swhook = "https://hooks.slack.com/services/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"
+        notify_slack(message, link, swhook)
         
         return super().form_valid(form)
 
