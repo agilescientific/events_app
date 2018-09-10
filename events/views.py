@@ -225,6 +225,24 @@ class CreateProjectView(LoginRequiredMixin, FormView):
     model = Project
     form_class = ProjectForm
     success_url = '/'
+    # fields = ['name', 'members', 'detail_small', 'detail_long', 'main_url', 'resources', 'github']
+
+    def get_initial(self):
+        """
+        Returns the initial data to use for forms on this view.
+        """
+        initial = super(CreateProjectView, self).get_initial()
+
+        if 'from' in self.request.GET:
+            try:
+                idea = Idea.objects.get(slug=self.request.GET['from'])
+                initial['name'] = idea.name
+                initial['detail_small'] = idea.detail_short
+                initial['detail_long'] = idea.detail
+            except:
+                pass
+
+        return initial
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
