@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django_slack_oauth',
     'rest_framework',
     'maintenance_mode',
     'events',
@@ -235,3 +236,12 @@ GH_ID = config('GH_ID')
 GH_SECRET = config('GH_SECRET')
 
 MAINTENANCE_MODE = False
+
+SLACK_CLIENT_ID = '78457272821.413767191280'
+SLACK_CLIENT_SECRET = 'c269e5902d11149777c07e4db74f8020'
+SLACK_SCOPE = 'identity.avatar,identity.basic,identity.email'
+SLACK_SUCCESS_REDIRECT_URL = '/'
+
+SLACK_PIPELINES = [
+    'events.pipelines.register_user'
+]

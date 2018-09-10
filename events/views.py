@@ -16,6 +16,7 @@ from urllib.parse import urlparse
 from markdownx.utils import markdownify
 import requests
 import json
+from django.http import Http404
 
 # Getting ready for JS frontend
 from django.core import serializers
