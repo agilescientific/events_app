@@ -11,7 +11,7 @@
         {% if Unow < e.event_enddate|date:"U" %}
 
             <!-- Page Heading -->
-            <h1 class="my-4 pddn-30-top pddn-20-bottom">Current events
+            <h1 class="my-4 pddn-30-top pddn-20-bottom">
             </h1>
 
           <!-- Event -->
@@ -44,7 +44,7 @@
   {% else %}
   
   {% now "U" as Unow %}
-  {% if Unow < e.event_enddate|date:"U" %}
+  {% if Unow < e.event_startdate|date:"U" %}
 
   <!-- Event -->
   <div class="row">
