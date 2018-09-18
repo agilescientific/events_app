@@ -4,7 +4,7 @@
 
 {% include "eventHeader.html" %}
 
-<div class="col-10 mx-auto">
+<div class="col-12 col-sm-12 col-md-10 mx-auto">
   <!-- Page Heading -->
   <div class="row pddn-30-top pddn-20-bottom">
     <div class="col-md-8">
@@ -60,9 +60,9 @@
         </div>
 
         <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordion">
-          <div class="card-body">
-              <div class="col-md-12">
-                  <div class="jumbotron">
+          <div class="card-body card-fw">
+              <div class="col-md-12 jumbo-fw">
+                  <div class="jumbotron jumbo-nor">
                     <h2>
                       <a href={{ p.get_absolute_url }}>Description</a>
                       {% if user.is_authenticated %}

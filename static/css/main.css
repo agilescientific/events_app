@@ -21,6 +21,20 @@ body {
   }
 }
 
+.jumbotron.jumbo-nor{
+  border-radius: 0px;
+}
+
+.col-md-12.jumbo-fw {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.card-body.card-fw {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
 #input.comment{
   width: 100%;
 }
