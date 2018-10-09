@@ -263,7 +263,8 @@ class CreateProjectView(LoginRequiredMixin, FormView):
         message = "Project *{}* was created.".format(self.object.name)
         link = settings.SITE_URL + "/project/{}".format(self.object.slug)
         swhook = event.slack_webhook
-        notify_slack(message, link, swhook)
+        if swhook:
+            notify_slack(message, link, swhook)
         
         return super().form_valid(form)
 
@@ -494,7 +495,8 @@ class CreateIdeaView(LoginRequiredMixin, FormView):
         link = settings.SITE_URL + '/event/{}/ideas'.format(self.kwargs['slug'])
         swhook = event.slack_webhook
         # swhook = "https://hooks.slack.com/services/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"
-        notify_slack(message, link, swhook)
+        if swhook:
+            notify_slack(message, link, swhook)
         
         return super().form_valid(form)
 
