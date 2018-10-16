@@ -27,4 +27,9 @@
     {% endif %}
     {% if project %}
     {% endif %}
+    {% if custom %}
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'custom' %}active{% endif %}" href="#"> {{ custom }} </a>
+    </li>
+    {% endif %}
 </ul>

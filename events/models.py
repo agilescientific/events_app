@@ -212,3 +212,13 @@ class Idea(models.Model):
         if not self.slug:
             self.slug = self._get_unique_slug()
         super().save()
+
+class GitHubCache(models.Model):
+    name = models.CharField(max_length=100)
+    content = models.TextField(max_length=100000, default="", verbose_name='API response', blank=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    github = models.URLField(verbose_name='URL to Github Repo', null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name + " - " + self.event.event_title

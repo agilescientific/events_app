@@ -10,7 +10,8 @@ from django.contrib.auth import get_user_model
 from machina.apps.forum.views import ForumView as BaseForumView
 from machina.apps.forum.views import Forum
 import datetime
-from .models import Event, EventRegistration, Organization, Project, EventClass, Idea, IdeaComment
+from .models import Event, EventRegistration, Organization, Project,\
+                    EventClass, Idea, IdeaComment, GitHubCache
 from .forms import OrganizationForm, ProjectForm, ImageUploadForm, IdeaForm
 from urllib.parse import urlparse
 from markdownx.utils import markdownify
@@ -151,6 +152,39 @@ class ProjectListView(ListView):
         else:
             context['registered'] = False
         context['current'] = 'projects'
+        return context
+
+class ZooDashView(ListView):
+    template_name = "githubDash.html"
+    queryset = Project.objects
+    context_object_name = 'projects'
+
+    def render_to_response(self, context):
+        event_pk = Event.objects.get(slug = self.kwargs['slug']).id
+        event_obj = Event.objects.get(id=event_pk)
+        if str(event_obj.event_class) != 'projects':
+            return HttpResponseRedirect('/event/{}'.format(event_obj.slug))
+
+        return super(ZooDashView, self).render_to_response(context)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        pk = Event.objects.get(slug = self.kwargs['slug']).id
+        self.projects = queryset.filter(event_id = pk)
+        return self.projects
+
+    def get_context_data(self,**kwargs):
+        context = super(ZooDashView, self).get_context_data(**kwargs)
+        pk = Event.objects.get(slug = self.kwargs['slug']).id
+        context['event'] = Event.objects.get(id = pk)
+        q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
+                                                     event_id = pk))
+        if q_reg > 0:
+            context['registered'] = True
+        else:
+            context['registered'] = False
+        context['current'] = 'custom'
+        context['custom'] = 'Dashboard'
         return context
 
 class JoinEventView(LoginRequiredMixin, View):
@@ -395,10 +429,10 @@ class GetGithubInfo(View):
 
                 repo_url = 'https://api.github.com/repos'+ repostr
                 
-                issues_r = requests.get(repo_url, json=payload)
+                issues_r = requests.get(repo_url, params=payload)
                 if issues_r.status_code == 200:
                     if issues_r.json()['has_issues']:
-                        issues_r = requests.get(repo_url+'/issues', json=payload)
+                        issues_r = requests.get(repo_url+'/issues', params=payload)
                         json_r = issues_r.json()
                     else:
                         json_r = {}
@@ -406,7 +440,7 @@ class GetGithubInfo(View):
                     json_r = {'error' : True}
 
                 headers = {'Accept':'application/vnd.github.v3.html+json'}
-                readme = requests.get(repo_url+'/readme', json=payload, headers=headers)
+                readme = requests.get(repo_url+'/readme', params=payload, headers=headers)
                 if readme.status_code == 200:
 
                     if type(json_r) == list:
@@ -414,11 +448,25 @@ class GetGithubInfo(View):
                     else:
                         json_r['readme_html'] = readme.content.decode()
 
-                    contents_r = requests.get(repo_url+'/contents/', json=payload)
+                    contents_r = requests.get(repo_url+'/contents/', params=payload)
                     contents_json = contents_r.json()
                     json_r.append({'files': contents_json})
                 elif issues_r.status_code > 400:
                     json_r = {'error' : True}
+
+        return JsonResponse(json_r, safe=False)
+
+class GetZooGithubInfo(View):
+
+    def get(self, request, slug):
+        if request.method == 'GET':
+
+            repro_git = GitHubCache.objects.get(id=1)
+            json_r = json.loads(repro_git.content)
+            stats = [ x[2] for x in list(json_r[-1]['day_stats'])]
+            hours = list(range(0, len(stats)))
+            json_r.append({'x': hours})
+            json_r.append({'y': stats})
 
         return JsonResponse(json_r, safe=False)
 

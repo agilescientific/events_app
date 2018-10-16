@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+{% include "eventHeader.html" %}
+
+<div class="container pddn-30-top">
+<div class="row pddn-10-top">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <!-- <div class="progress" style="width: 100%">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+              <span class="sr-only">0% Complete</span>
+            </div>
+          </div> -->
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Top Contributors</h5>
+                  <div id="contribs"></div>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  
+                  <div id="stats">
+                    <canvas id="statsChart" width="400" height="400"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <input type="hidden" name="variable" value="{{ event.slug }}" readonly>
+          
+          <div id="repocontainer" class="row">
+            <div id="ghapiissues" class="col-lg-6 col-md-6 col-12">
+              <div id="openiss"></div>
+              <div id="closediss" class="pddn-10-top"></div>
+            </div>
+            <div id="ghapidata" class="col-lg-6 col-md-6 col-12"></div>
+            <div id="ghreadme" class="col-lg-12 col-md-12 col-12 pddn-10-top"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pddn-100-top"></div>
+
+{% endblock %}
+
+{% block scripts %} 
+<script>
+
+  $(document).ready(function(){
+    var repcontainer = $(document).find('#repocontainer');
+    var innelem = $(document).find('#ghapidata');
+    var oisselem = $(document).find('#openiss');
+    var cisselem = $(document).find('#closediss');
+    var rdelem = $(document).find('#ghreadme');
+    var contribelem = $(document).find('#contribs');
+    var statselem = $(document).find('#stats');
+
+    $(innelem).html('<div id="loader"><img src="/static/img/loader.gif" alt="loading..."></div>');
+    $(rdelem).html('<div id="loader"><img src="/static/img/loader.gif" alt="loading..."></div>');
+
+    var get_gh = '/event/' + $(document).find('input').val() + '/get_zoo_info';
+    
+    setInterval(function() {
+      console.log("this");
+    }, 60 * 1000);
+
+    var stops = [25,55,85,100];
+    $.each(stops, function(index, value){
+        setTimeout(function(){
+            $( ".progress-bar" ).css( "width", value + "%" ).attr( "aria-valuenow", value ); 
+        }, index * 1500);
+    });
+
+
+    function do_this(){
+      requestJSON(get_gh, function(json){
+      var outhtml = '';
+      var oissouthtml = '';
+      var cissouthtml = '';
+      var contribhtml = '';
+      var statshtml = '';
+
+      $.getJSON(get_gh, function(json){
+        issues = json;
+        outputIssueContent();
+      });
+
+      function outputIssueContent() {
+        if(issues.error){ $(repcontainer).html('<div class="col-12 text-center"> No Repo Found!</div>');}
+        else {
+          contribhtml = contribhtml + '<ul class="list-group">';
+          var i = 0;
+          $.each(issues[3].contrib.reverse(), function(index) {
+            i = i+1;
+            var cmt = issues[3].contrib[index];
+            
+            if (i<7){
+              var avatar = '<img src='+ cmt.author.avatar_url +' style="height: 50px;" /> &nbsp';
+
+              contribhtml = contribhtml +
+                        '<li class="list-group-item">' + avatar + 
+                          '<a href="'+cmt.author.html_url+'" target="_blank">' + cmt.author.login + '</a>' + '</li>';
+            }
+          });
+
+          contribhtml = contribhtml + '</ul>';
+
+          outhtml = outhtml + '<h5 class="card-title">Content:</h5> <ul class="list-group">';
+          var i = 0;
+          $.each(issues[2].files, function(index) {
+            i = i+1;
+            var cmt = issues[2].files[index];
+
+            if(cmt.type=='file'){
+              var icon = '<i class="far fa-file-alt"></i>&nbsp'
+            }
+            else {
+              var icon = '<i class="far fa-folder-open"></i>&nbsp'
+            }
+            outhtml = outhtml +
+                      '<li class="list-group-item">' + icon + 
+                        '<a href="'+cmt.html_url+'" target="_blank">' + '<small>' + cmt.name + '</a>' + '</small>' + '</li>';
+          });
+
+          outhtml = outhtml + '</ul>';
+
+          oissouthtml = oissouthtml + '<h5 class="card-title">Latest Open Issues:</h5> <ul class="list-group">';
+          cissouthtml = cissouthtml + '<h5 class="card-title">Latest Closed Issues:</h5> <ul class="list-group">';
+          var i = 0;
+          var j = 0;
+          $.each(issues[0].issues, function(index) {
+            
+            var cmt = issues[0].issues[index];
+            if(cmt.state == 'open' && i<6) {
+              i = i+1;
+              var odate = moment(cmt.created_at);
+              var now = moment();
+              var delta = moment.duration(now.diff(odate)).humanize();
+              oissouthtml = oissouthtml +
+                        '<li class="list-group-item list-group-item-success"><a href="'+cmt.html_url+'" target="_blank">' +
+                            '<small>' + cmt.title + '</a>' + '- ' + delta + ' ago' +
+                        ' - author: ' + cmt.user.login + '</small>' + '</li>';
+            };
+
+            if(cmt.state == 'closed' && j<6) {
+              j = j+1;
+              var odate = moment(cmt.created_at);
+              var now = moment();
+              var delta = moment.duration(now.diff(odate)).humanize();
+              cissouthtml = cissouthtml +
+                        '<li class="list-group-item list-group-item-warning"><a href="'+cmt.html_url+'" target="_blank">' +
+                            '<small>' + cmt.title + '</a>' + '- ' + delta + ' ago' +
+                        ' - author: ' + cmt.user.login + '</small>' + '</li>';
+            };
+          });
+
+          if(j == 0){
+            cissouthtml = '<h5 class="card-title">Latest Closed Issues:</h5> <p> No closed issues found. </p>';
+          };
+
+          do_chart(issues[5].x, issues[6].y);
+          console.log(issues[5].x);
+          
+          oissouthtml = oissouthtml + '</ul>';
+          cissouthtml = cissouthtml + '</ul>';
+          contribhtml = contribhtml + '</ul>';
+          
+          $(oisselem).html(oissouthtml);
+          $(cisselem).html(cissouthtml);
+          $(contribelem).html(contribhtml);
+          $(innelem).html(outhtml);
+          $(rdelem).html(issues[1].readme_html);
+          }
+        }
+      });
+    };
+    
+    do_this();
+
+    setInterval(function() {
+      do_this();
+    }, 60 * 1000);
+
+    
+    function requestJSON(url, callback) {
+      $.ajax({
+        url: url,
+        complete: function(xhr) {
+          callback.call(null, xhr.responseJSON);
+        }
+      });
+    };
+    
+    function do_chart(x, y){
+      var ctx = document.getElementById("statsChart").getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: x,
+              datasets: [{
+                  label: '# Contributions',
+                  data: y,
+                  borderWidth: 1
+              }],
+          },
+          options: {
+              scales: {
+                  yAxes: [{
+                      ticks: {
+                          beginAtZero:true
+                      },
+                      labelString: 'Hours Ago',
+                  }]
+              }
+          }
+        });
+    };
+
+  });
+</script>
+{% endblock %}

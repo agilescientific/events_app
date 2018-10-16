@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Event, Organization, EventRegistration, \
                     Project, EventClass, EventSponsorship, Idea, \
-                    IdeaComment
+                    IdeaComment, GitHubCache
 from markdownx.admin import MarkdownxModelAdmin
 
 # Register your models here.
@@ -13,3 +13,4 @@ admin.site.register(Idea)
 admin.site.register(IdeaComment)
 admin.site.register(EventRegistration)
 admin.site.register(EventSponsorship)
+admin.site.register(GitHubCache)
