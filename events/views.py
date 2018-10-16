@@ -19,6 +19,8 @@ import requests
 import json
 from django.http import Http404
 
+import numpy as np
+
 # Getting ready for JS frontend
 from django.core import serializers
 from rest_framework import viewsets
@@ -463,10 +465,17 @@ class GetZooGithubInfo(View):
 
             repro_git = GitHubCache.objects.get(id=1)
             json_r = json.loads(repro_git.content)
-            stats = [ x[2] for x in list(json_r[-1]['day_stats'])]
-            hours = list(range(0, len(stats)))
-            json_r.append({'x': hours})
-            json_r.append({'y': stats})
+            days = [1, 2 ,3]                
+            stats = np.array(json_r[-1]['day_stats'])
+            # stats = [ x[2] for x in list(json_r[-1]['day_stats'])]
+            acc = []
+            for day in days:
+                acc.append(int(np.sum(stats[stats[:,0] == day][:,2])))
+
+            # hours = list(range(0, len(stats)))
+            days = ['Monday', 'Tuesday', 'Wednesday']
+            json_r.append({'x': days})
+            json_r.append({'y': acc})
 
         return JsonResponse(json_r, safe=False)
 
