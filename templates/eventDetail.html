@@ -7,27 +7,35 @@
 
 <div class="col-10 mx-auto">
   <div class="row pddn-30-top pddn-20-bottom">
-    <div class="col-md-10">
+    <div class="col-md-7">
       <h1 class="head-pad">
         
       </h1>
     </div>
-    <div class="col-md-2 head-right">
+    <div class="col-md-5 head-right">
       {% now "U" as Unow %}
       {% if Unow < object.event_enddate|date:"U" %}
       {% if object.canjoin %}
       {% if registered == False %}
-        <button type="button" class="btn btn-success head-pad" data-toggle="modal" data-target="#joinModalCenter">
-            Join
-        </button>
+        {% if event.charge_amount %}
+          Reserve a spot for: 
+          <strong>{{event.charge_amount.amount}}{{event.charge_amount.currency}}</strong>
+        {% endif %}
+        &nbsp;
+        <a class="btn btn-success head-pad" href="/event/{{event.slug}}/payment">
+            Register
+        </a>
       {% endif %}
+        <a class="btn btn-success head-pad" href="#">
+          Registered
+        </a>
       {% endif %}
       {% endif %}
     </div>
   </div>
 
   <!-- Project -->
-  <div class="row pddn-30-top">
+  <div class="row pddn-10-top">
       <div class="col-md-8">
         <!-- <img class="img-fluid rounded mb-3 mb-md-0" src="{{ event.img_url|safe }}" alt=""> -->
         <p>{{ html_body|safe }}</p>

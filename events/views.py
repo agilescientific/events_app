@@ -510,6 +510,17 @@ class RulesView(DetailView):
         context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).rules)
         return context
 
+class VenueView(DetailView):
+    template_name = "venue.html"
+    model = Event
+    context_object_name = 'event'
+
+    def get_context_data(self,**kwargs):
+        context = super(VenueView, self).get_context_data(**kwargs)
+        context['current'] = 'venue'
+        context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).venue)
+        return context
+
 class IdeasView(DetailView):
     template_name = "ideaList.html"
     model = Event

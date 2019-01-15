@@ -7,6 +7,7 @@ from markdownx.models import MarkdownxField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from taggit.managers import TaggableManager
+from payments.models import Amount
 
 User = get_user_model()
 
@@ -72,8 +73,10 @@ class Event(models.Model):
     event_location_city = models.CharField(max_length=100, null=True)
     event_location_country = models.CharField(max_length=100, null=True)
 
+    venue = MarkdownxField(max_length=5000, default="", blank=True, null=True)
+
     body_text = MarkdownxField(max_length=5000, default="")
-    rules = MarkdownxField(max_length = 10000, default="")
+    rules = MarkdownxField(max_length = 10000, default="", blank=True, null=True)
     event_class = models.ForeignKey(EventClass, on_delete=models.CASCADE)
     forum = models.ForeignKey('forum.Forum', related_name='event_forum',
                               on_delete=models.CASCADE, blank=True, null=True)
@@ -87,6 +90,9 @@ class Event(models.Model):
     need_ideas = models.NullBooleanField()
     canjoin = models.NullBooleanField()
     hide = models.NullBooleanField()
+
+    charge_amount = models.ForeignKey(Amount, related_name='event_amount_info',
+                                     null=True, blank=True, on_delete=models.CASCADE)
 
     slack_webhook = models.CharField(max_length=200, blank=True, null=True)
 
@@ -127,6 +133,7 @@ class EventRegistration(models.Model):
     event = models.ForeignKey(Event, related_name='event_info', on_delete=models.CASCADE)
     member = models.ForeignKey(User, related_name='user_info', on_delete=models.CASCADE)
     register_date = models.DateTimeField(auto_now_add=True)
+    payment = models.ForeignKey('payments.Payment', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.member.username + " - " + self.event.event_title
