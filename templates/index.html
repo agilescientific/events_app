@@ -4,7 +4,7 @@
 
   {% for e in events %}
     {% if e.hide %}
-      {% if user.is_staff %}
+      {% if user.is_staff or user.is_superuser %}
         {% now "U" as Unow %}
         {% if Unow > e.event_startdate|date:"U" %}
           {% if Unow < e.event_enddate|date:"U" %}

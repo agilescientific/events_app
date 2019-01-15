@@ -17,6 +17,7 @@ urlpatterns = [
     # path('event/<slug:slug>/teams', views.TeamListView.as_view(), name='event-teams'),
     path('event/<slug:slug>/forum', views.ForumView.as_view(), name='event-forum'),
     path('event/<slug:slug>/projects', views.ProjectListView.as_view(), name='event-projects'),
+    path('event/<slug:slug>/schedule', views.ScheduleView.as_view(), name='event-schedule'),
     path('event/<slug:slug>/venue', views.VenueView.as_view(), name='event-venue'),
     path('event/<slug:slug>/zoo_dash', views.ZooDashView.as_view(), name='zoo-dash'),
     path('event/<slug:slug>/get_zoo_info', views.GetZooGithubInfo.as_view(), name='get-zoo-info'),

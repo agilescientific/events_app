@@ -74,6 +74,7 @@ class Event(models.Model):
     event_location_country = models.CharField(max_length=100, null=True)
 
     venue = MarkdownxField(max_length=5000, default="", blank=True, null=True)
+    schedule = MarkdownxField(max_length=5000, default="", blank=True, null=True)
 
     body_text = MarkdownxField(max_length=5000, default="")
     rules = MarkdownxField(max_length = 10000, default="", blank=True, null=True)
