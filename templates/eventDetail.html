@@ -15,21 +15,22 @@
     <div class="col-md-5 head-right">
       {% now "U" as Unow %}
       {% if Unow < object.event_enddate|date:"U" %}
-      {% if object.canjoin %}
-      {% if registered == False %}
-        {% if event.charge_amount %}
-          Reserve a spot for: 
-          <strong>{{event.charge_amount.amount}}{{event.charge_amount.currency}}</strong>
+        {% if object.canjoin %}
+          {% if registered == False %}
+            {% if event.charge_amount %}
+              Reserve a spot for: 
+              <strong>{{event.charge_amount.amount}}{{event.charge_amount.currency}}</strong>
+            {% endif %}
+            &nbsp;
+            <a class="btn btn-success head-pad" href="/event/{{event.slug}}/payment">
+                Register
+            </a>
+          {% else %}
+            <a class="btn btn-success head-pad" href="#">
+              Registered
+            </a>
+          {% endif%}
         {% endif %}
-        &nbsp;
-        <a class="btn btn-success head-pad" href="/event/{{event.slug}}/payment">
-            Register
-        </a>
-      {% endif %}
-        <a class="btn btn-success head-pad" href="#">
-          Registered
-        </a>
-      {% endif %}
       {% endif %}
     </div>
   </div>
