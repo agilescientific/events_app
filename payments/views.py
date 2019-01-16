@@ -65,6 +65,15 @@ class ChargeView(LoginRequiredMixin, TemplateView):
                 return HttpResponseRedirect('/event/{}/charge-error'.format(ev.slug))
         return HttpResponseRedirect('/event/{}/charge'.format(ev.slug))
 
+    def get(self, request, *args, **kwargs):
+        ev = Event.objects.get(slug = self.kwargs['slug'])
+        q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
+                                                     event_id = ev.id))
+        if q_reg > 0:
+            return super(ChargeView, self).get(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect('/event/{}'.format(ev.slug))
+
     def get_context_data(self, **kwargs): # new
         context = super().get_context_data(**kwargs)
         context['event'] = Event.objects.get(slug = self.kwargs['slug'])
