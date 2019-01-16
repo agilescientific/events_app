@@ -6,23 +6,17 @@
 {% include "eventHeader.html" %}
 
 <div class="col-10 mx-auto">
-  <div class="row pddn-30-top pddn-20-bottom">
-    <div class="col-md-10">
-      <h1 class="head-pad">
-        Schedule
-      </h1>
-    </div>
-    <div class="col-md-2 head-right">
-
-    </div>
-  </div>
+    <div class="row">
+        <!-- Page Heading -->
+        <h3 class="my-4 pddn-30-top pddn-20-bottom"> Schedule</h3>
+      </div>
 
   <!-- Venue -->
-  <div class="row pddn-30-top">
-      <div class="col-md-10 mx-auto">
-        <!-- <img class="img-fluid rounded mb-3 mb-md-0" src="{{ event.img_url|safe }}" alt=""> -->
-        <p>{{ html_body|safe }}</p>
+  <div class="row pddn-20-top">
+      <div class="col-md-12 mx-auto">
+        {{ html_body|safe }}
       </div>
   </div>
+</div>
 
 {% endblock %}

@@ -92,6 +92,7 @@ class Event(models.Model):
     canjoin = models.NullBooleanField()
     hide = models.NullBooleanField()
 
+    price_detail = models.CharField(max_length=100, null=True, blank=True)
     charge_amount = models.ForeignKey(Amount, related_name='event_amount_info',
                                      null=True, blank=True, on_delete=models.CASCADE)
 

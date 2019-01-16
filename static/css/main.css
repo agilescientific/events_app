@@ -17,7 +17,6 @@ body {
   }
   .head-pad {
     margin-top: 0px !important;
-    margin-bottom: 1.5rem !important;
   }
 }
 
@@ -59,7 +58,6 @@ span.badge {
 
 .head-pad {
   margin-top: 1.5rem !important;
-  margin-bottom: 1.5rem !important;
 }
 
 .head-right {
