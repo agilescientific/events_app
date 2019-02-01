@@ -20,6 +20,8 @@ import json
 from django.http import Http404
 
 import numpy as np
+import os
+from subprocess import Popen, PIPE, STDOUT
 
 # Getting ready for JS frontend
 from django.core import serializers
@@ -799,3 +801,18 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = EventSerializer
+
+class HandleGitPush(View):
+
+    def post(self, request):
+
+        if request.method == 'POST':
+            if "repository" in request.POST:
+                cmd = "git clone --depth 1 ssh://git@github.com:dfcastap/apipushgo.git /tmp/apipushgo"
+                # result = subprocess.call(cmd, shell=True)
+                p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                output = p.stdout.read()
+                with open("/tmp/git_out",'w') as f:
+                    f.write(output)
+
+        return 200
