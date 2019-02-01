@@ -22,6 +22,7 @@ from django.http import Http404
 import numpy as np
 import os
 from subprocess import Popen, PIPE, STDOUT
+from django.utils.decorators import method_decorator
 
 # Getting ready for JS frontend
 from django.core import serializers
