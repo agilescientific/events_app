@@ -804,14 +804,28 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = EventSerializer
 
+# @csrf_exempt
+# class HandleGitPush(View):
+#     def dispatch(self, request, *args, **kwargs):
+#         return super(HandleGitPush, self).dispatch(request, *args, **kwargs)
+
+#     def post(self, request):
+
+#         if request.method == 'POST':
+#             if "repository" in request.POST:
+#                 cmd = "git clone --depth 1 ssh://git@github.com:dfcastap/apipushgo.git /tmp/apipushgo"
+#                 # result = subprocess.call(cmd, shell=True)
+#                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+#                 output = p.stdout.read()
+#                 with open("/tmp/git_out",'w') as f:
+#                     f.write(output)
+
+#         return 200
+
 @csrf_exempt
-class HandleGitPush(View):
-    def dispatch(self, request, *args, **kwargs):
-        return super(HandleGitPush, self).dispatch(request, *args, **kwargs)
+def HandleGitPush(request):
 
-    def post(self, request):
-
-        if request.method == 'POST':
+    if request.method == 'POST':
             if "repository" in request.POST:
                 cmd = "git clone --depth 1 ssh://git@github.com:dfcastap/apipushgo.git /tmp/apipushgo"
                 # result = subprocess.call(cmd, shell=True)
@@ -819,5 +833,5 @@ class HandleGitPush(View):
                 output = p.stdout.read()
                 with open("/tmp/git_out",'w') as f:
                     f.write(output)
-
-        return 200
+                    
+    return HttpResponse(200)
