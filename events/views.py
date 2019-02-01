@@ -804,8 +804,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = EventSerializer
 
+@csrf_exempt
 class HandleGitPush(View):
-    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(HandleGitPush, self).dispatch(request, *args, **kwargs)
 
