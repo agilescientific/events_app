@@ -24,6 +24,7 @@ import os
 from subprocess import Popen, PIPE, STDOUT
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+import gp
 
 # Getting ready for JS frontend
 from django.core import serializers
@@ -826,12 +827,11 @@ class UserViewSet(viewsets.ModelViewSet):
 def HandleGitPush(request):
 
     if request.method == 'POST':
-            if "repository" in request.POST:
-                cmd = "git clone --depth 1 ssh://git@github.com:dfcastap/apipushgo.git /tmp/apipushgo"
-                # result = subprocess.call(cmd, shell=True)
-                p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                output = p.stdout.read()
-                with open("/tmp/git_out",'w') as f:
-                    f.write(output)
+            if 'repository' in request.POST:
+                ghacc = 'dfcastap'
+                repo = request.POST['repository']['name']
+                branch = request.POST['refs'].split('/')[-1]
+                bucket = 'geocomp'
+                gp.pull_up(ghacc, repo, branch, bucket)
                     
     return HttpResponse(200)
