@@ -825,13 +825,19 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @csrf_exempt
 def HandleGitPush(request):
-
+    
     if request.method == 'POST':
-            if 'repository' in request.POST:
-                ghacc = 'dfcastap'
-                repo = request.POST['repository']['name']
-                branch = request.POST['refs'].split('/')[-1]
-                bucket = 'geocomp'
-                gp.pull_up(ghacc, repo, branch, bucket)
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        if 'repository' in body:
+            ghacc = 'dfcastap'
+            repo = body['repository']['name']
+            branch = body['ref'].split('/')[-1]
+            bucket = 'geocomp'
+
+            print('>>>> --- ', ghacc, repo, branch, bucket)
+            gp.pull_up(ghacc, repo, branch, bucket)
                     
-    return HttpResponse(200)
+        return HttpResponse(200)
+    else:
+        return HttpResponseRedirect('/')
