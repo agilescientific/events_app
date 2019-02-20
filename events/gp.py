@@ -2,7 +2,6 @@ import requests
 from subprocess import Popen, PIPE, STDOUT
 import boto3
 import zipfile, os
-import
 
 def backupToZip(folder, zfname):
 
