@@ -839,7 +839,7 @@ def HandleGitPush(request):
             gp.pull_up(ghacc, repo, branch, bucket)
             m = f"Download link for branch {branch}:"
             m += f" https://s3.amazonaws.com/geocomp/{repo}-{branch}.zip"
-            notify_slack(m, l=None, swhook=settings.SLACK_WEBHOOK)
+            notify_slack(m, l=None, swhook=settings.SLACK_COURSE_WEBHOOK)
 
         return HttpResponse(200)
     else:
