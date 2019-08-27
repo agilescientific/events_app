@@ -18,11 +18,11 @@
         {% if object.canjoin %}
           {% if registered == False %}
             <a class="btn btn-success head-pad" href="/event/{{event.slug}}/payment">
-                Register
+                Join
             </a>
           {% else %}
-            <a class="btn btn-success head-pad" href="#">
-              Registered
+            <a class="btn btn-info head-pad" href="#">
+              Joined
             </a>
           {% endif%}
         {% endif %}
