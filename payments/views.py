@@ -20,7 +20,22 @@ class PayView(LoginRequiredMixin, TemplateView):
         ev = Event.objects.get(slug = self.kwargs['slug'])
         q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
                                                      event_id = ev.id))
+        am = Amount.objects.get(event = ev)
         if q_reg > 0:
+            return HttpResponseRedirect('/event/{}'.format(ev.slug))
+        elif q_reg == 0 and int(am.amount) == 0:
+            c, created = Payment.objects.get_or_create(user = self.request.user,
+                                                event = ev)
+            c.amount = am
+            c.stripe_id = 'freevent'
+            c.save()
+
+            e, created = EventRegistration.objects.get_or_create(
+                    event = ev,
+                    member = User.objects.get(id=self.request.user.id),
+                    )
+            e.payment = c
+            e.save()
             return HttpResponseRedirect('/event/{}'.format(ev.slug))
         else:
             return super(PayView, self).get(request, *args, **kwargs)
