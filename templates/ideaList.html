@@ -103,7 +103,7 @@
       function outputIssueContent() {
         if(ideas.error){ $(repcontainer).html('<div class="col-12 text-center"> No ideas found!</div>');
         } else if(ideas.length==0){
-          $(repcontainer).html('<div class="col-12 text-center"> No ideas to show yet. <a href="/event/{{ event.slug }}">Join</a> the event to add one.</div>');
+          $(repcontainer).html('<div class="col-12 text-center pddn-50-top"> No ideas to show yet. <a href="/event/{{ event.slug }}">Join</a> the event to add one.</div>');
         }
         else {
           var i = 0;
