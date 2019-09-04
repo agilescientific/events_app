@@ -52,6 +52,10 @@ body {
   color: blue;
 }
 
+.thumb{
+  padding-left: 10px !important;
+}
+
 span.badge {
   font-size: 14pt;
 }

@@ -113,10 +113,10 @@
             
             var vbutton = '';
             if(cmt.voters.indexOf(uname) < 0) {
-              vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb vote" href="#/" onclick="addVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
+              vbutton = '<a id="vup'+i+'" class="thumb vote" href="#/" onclick="addVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
             }
             else {
-              vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb unvote" href="#/" onclick="remVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
+              vbutton = '<a id="vup'+i+'" class="thumb unvote" href="#/" onclick="remVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
             };
 
             vlist = '';
