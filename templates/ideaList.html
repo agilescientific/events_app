@@ -103,7 +103,7 @@
       function outputIssueContent() {
         if(ideas.error){ $(repcontainer).html('<div class="col-12 text-center"> No ideas found!</div>');
         } else if(ideas.length==0){
-          $(repcontainer).html('<div class="col-12 text-center"> No ideas to show yet. <a href="/event/{{ event.slug }}">Join</a> the event to add one.</div>');
+          $(repcontainer).html('<div class="col-12 text-center pddn-50-top"> No ideas to show yet. <a href="/event/{{ event.slug }}">Join</a> the event to add one.</div>');
         }
         else {
           var i = 0;
@@ -113,14 +113,20 @@
             
             var vbutton = '';
             if(cmt.voters.indexOf(uname) < 0) {
-              vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb vote" href="#/" onclick="addVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
+              vbutton = '<a id="vup'+i+'" class="thumb vote" href="#/" onclick="addVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
             }
             else {
-              vbutton = '&nbsp &nbsp <a id="vup'+i+'" class="thumb unvote" href="#/" onclick="remVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
+              vbutton = '<a id="vup'+i+'" class="thumb unvote" href="#/" onclick="remVote('+"'"+cmt.name+"'"+', '+i+')"><i class="fas fa-thumbs-up fa-2x "></i></a>';
             };
+
+            vlist = '';
+            $.each(cmt['voters'], function(vidx) {
+              vlist += cmt['voters'][vidx] + '<br />'
+            });
+
             outhtml = outhtml +
                       '<tr>'+
-                        '<th scope="row">'+
+                        '<th width="85%" scope="row">'+
                             '<a href="'+cmt.get_absolute_url+'">'+
                             cmt.name+
                             '</a>'+
@@ -143,14 +149,17 @@
                                 // 'Share'+
                             '</small></p>'+
                         '</th>'+
-                        '<th>'+
-                          '<span id="votes'+i+'" class="badge badge-pill badge-info">'+ cmt.votes +'</span>'+
+                        '<th width="15%">'+
+                          '<span id="votes'+i+'" class="badge badge-pill badge-info idea-pill" data-toggle="tooltip" data-placement="bottom" data-html="true" title="'+vlist+'">'+ cmt.votes +'</span>'+
                             vbutton+
                         '</th>'+
                       '</tr>'                      
           });
           outhtml = outhtml + '</tbody> </table>';
           $(innelem).html(outhtml);
+          $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+          });
           }
         }
     });

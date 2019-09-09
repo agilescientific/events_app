@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+{% include "eventHeader.html" %}
+
+<div class="col-10 mx-auto">
+    <div class="row">
+        <!-- Page Heading -->
+        <h3 class="my-4 pddn-30-top pddn-20-bottom"> Schedule</h3>
+      </div>
+
+  <!-- Venue -->
+  <div class="row pddn-20-top">
+      <div class="col-md-12 mx-auto">
+        {{ html_body|safe }}
+      </div>
+  </div>
+</div>
+
+{% endblock %}

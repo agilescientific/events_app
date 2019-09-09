@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    {% block title %}<title>Agile* - Events</title>{% endblock %}
+    {% block title %}<title>Agile* - Events {% if event %} - {{ event.event_title }} {% endif %}</title>{% endblock %}
 
     <!-- Bootstrap core CSS -->
     {% load staticfiles %}

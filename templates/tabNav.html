@@ -7,6 +7,14 @@
         <a class="nav-link {% if current == 'projects' %}active{% endif %}" href="/event/{{ event.slug }}/projects">Projects</a>
     </li>
     {% endif %}
+    {% if event.event_class_id == 3 %}
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'schedule' %}active{% endif %}" href="/event/{{ event.slug }}/schedule">Schedule</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if current == 'venue' %}active{% endif %}" href="/event/{{ event.slug }}/venue">Venue</a>
+    </li>
+    {% endif %}
     {% if event.need_ideas %}
     <li class="nav-item">
         <a class="nav-link {% if current == 'ideas' %}active{% endif %}" href="/event/{{ event.slug }}/ideas">Ideas</a>
@@ -29,7 +37,7 @@
     {% endif %}
     {% if custom %}
     <li class="nav-item">
-        <a class="nav-link {% if current == 'custom' %}active{% endif %}" href="#"> {{ custom }} </a>
+        <a class="nav-link active" href="#"> {{ custom }} </a>
     </li>
     {% endif %}
 </ul>

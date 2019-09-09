@@ -20,6 +20,11 @@ import json
 from django.http import Http404
 
 import numpy as np
+import os
+from subprocess import Popen, PIPE, STDOUT
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+import events.gp as gp
 
 # Getting ready for JS frontend
 from django.core import serializers
@@ -510,6 +515,28 @@ class RulesView(DetailView):
         context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).rules)
         return context
 
+class VenueView(DetailView):
+    template_name = "venue.html"
+    model = Event
+    context_object_name = 'event'
+
+    def get_context_data(self,**kwargs):
+        context = super(VenueView, self).get_context_data(**kwargs)
+        context['current'] = 'venue'
+        context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).venue)
+        return context
+
+class ScheduleView(DetailView):
+    template_name = "schedule.html"
+    model = Event
+    context_object_name = 'event'
+
+    def get_context_data(self,**kwargs):
+        context = super(ScheduleView, self).get_context_data(**kwargs)
+        context['current'] = 'schedule'
+        context['html_body'] = markdownify(Event.objects.get(slug = self.kwargs['slug']).schedule)
+        return context
+
 class IdeasView(DetailView):
     template_name = "ideaList.html"
     model = Event
@@ -777,3 +804,43 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = EventSerializer
+
+# @csrf_exempt
+# class HandleGitPush(View):
+#     def dispatch(self, request, *args, **kwargs):
+#         return super(HandleGitPush, self).dispatch(request, *args, **kwargs)
+
+#     def post(self, request):
+
+#         if request.method == 'POST':
+#             if "repository" in request.POST:
+#                 cmd = "git clone --depth 1 ssh://git@github.com:dfcastap/apipushgo.git /tmp/apipushgo"
+#                 # result = subprocess.call(cmd, shell=True)
+#                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+#                 output = p.stdout.read()
+#                 with open("/tmp/git_out",'w') as f:
+#                     f.write(output)
+
+#         return 200
+
+@csrf_exempt
+def HandleGitPush(request):
+    
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        if 'repository' in body:
+            ghacc = 'dfcastap'
+            repo = body['repository']['name']
+            branch = body['ref'].split('/')[-1]
+            bucket = 'geocomp'
+
+            print('>>>> --- ', ghacc, repo, branch, bucket)
+            gp.pull_up(ghacc, repo, branch, bucket)
+            m = f"Download link for branch {branch}:"
+            m += f" https://s3.amazonaws.com/geocomp/{repo}-{branch}.zip"
+            notify_slack(m, l=None, swhook=settings.SLACK_COURSE_WEBHOOK)
+
+        return HttpResponse(200)
+    else:
+        return HttpResponseRedirect('/')

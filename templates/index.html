@@ -4,7 +4,33 @@
 
   {% for e in events %}
     {% if e.hide %}
-    
+      {% if user.is_staff or user.is_superuser %}
+        {% now "U" as Unow %}
+        {% if Unow > e.event_startdate|date:"U" %}
+          {% if Unow < e.event_enddate|date:"U" %}
+
+              <!-- Page Heading -->
+              <h1 class="my-4 pddn-30-top pddn-20-bottom">
+              </h1>
+
+            <!-- Event -->
+            <div class="row">
+                <div class="col-md-5">
+                  <a href="{{ e.get_absolute_url }}"><img class="img-fluid rounded mb-3 mb-md-0" src="{{ e.img_url|safe }}" alt=""></a>
+                </div>
+                <div class="col-md-7">
+                  <h3>{{ e.event_title }}</h3>
+                  <h4><small>{{ e.event_startdate|date:'D, N d, Y. P' }} - {{ e.event_enddate|date:'D, N d, Y. P' }}</small></h4>
+                  <p>{{ e.description_text|safe }}</p>
+                  <a class="btn btn-primary" href="{{ e.get_absolute_url }}">View Event</a>
+                </div>
+            </div>
+            
+            <hr>
+            <!-- /.row -->
+          {% endif %}
+        {% endif %}
+      {% endif %}
     {% else %}
       {% now "U" as Unow %}
       {% if Unow > e.event_startdate|date:"U" %}

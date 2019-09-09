@@ -17,7 +17,6 @@ body {
   }
   .head-pad {
     margin-top: 0px !important;
-    margin-bottom: 1.5rem !important;
   }
 }
 
@@ -53,13 +52,26 @@ body {
   color: blue;
 }
 
+.thumb{
+  padding-left: 0px !important;
+}
+
+.idea-pill{
+  margin-bottom: 5px !important;
+}
+
+@media (min-width: 992px) {
+  .thumb{
+    padding-left: 10px !important;
+  }
+}
+
 span.badge {
   font-size: 14pt;
 }
 
 .head-pad {
   margin-top: 1.5rem !important;
-  margin-bottom: 1.5rem !important;
 }
 
 .head-right {

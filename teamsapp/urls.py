@@ -36,6 +36,7 @@ urlpatterns = [
     re_path(r'^event_forums/', include(board.urls)),
     re_path(r'^markdownx/', include(markdownx)),
     url(r'^slack/', include('django_slack_oauth.urls')),
+    path('', include('payments.urls')),
 ]
 
 if settings.DEBUG:

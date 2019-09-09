@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'markdownx',
     'taggit',
     'background_task',
+    'payments.apps.PaymentsConfig',
+    'mathfilters',
 ] + get_machina_apps()
 
 MIDDLEWARE = [
@@ -89,6 +91,7 @@ TEMPLATES = [
         'DIRS': [
             TEMPLATE_DIR, 
             TEMPLATE_DIR+'/machina',
+            'templates',
             ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -246,3 +249,7 @@ SLACK_SUCCESS_REDIRECT_URL = '/'
 SLACK_PIPELINES = [
     'events.pipelines.register_user'
 ]
+
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
+
