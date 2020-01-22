@@ -8,6 +8,7 @@ import stripe
 from django.contrib.auth import get_user_model
 from .models import Payment, Amount
 from events.models import Event, EventRegistration
+from events.views import OptionsMixin
 
 User = get_user_model()
 
@@ -49,7 +50,7 @@ class PayView(LoginRequiredMixin, TemplateView):
         context['html_body'] = markdownify(context['charges'].long_description)
         return context
 
-class ChargeView(LoginRequiredMixin, TemplateView):
+class ChargeView(LoginRequiredMixin, OptionsMixin, TemplateView):
     template_name = 'charge.html'
 
     def post(self, request, slug):

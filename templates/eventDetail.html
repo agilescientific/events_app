@@ -101,4 +101,20 @@
     </div>
   </div>
 </div>
+
+{% if show_options %}
+  {% include "options_modal.html" %}
+{% endif %}
+
+{% endblock %}
+
+
+{% block scripts %}
+  {% if show_options %}
+    <script type="text/javascript">
+      $(window).on('load',function(){
+          $('#optionsModal').modal('show');
+      });
+    </script>
+  {% endif %}
 {% endblock %}

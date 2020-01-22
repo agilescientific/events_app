@@ -98,6 +98,8 @@ class Event(models.Model):
 
     slack_webhook = models.CharField(max_length=200, blank=True, null=True)
 
+    has_registration_options = models.NullBooleanField()
+
     def __str__(self):
         return self.event_title
 
@@ -132,10 +134,31 @@ class EventSponsorship(models.Model):
         return self.sponsor.name + " - " + self.event.event_title
 
 class EventRegistration(models.Model):
+    SHIRT_CHOICES = [
+        ('WS', "Women's S"),
+        ('WM', "Women's M"),
+        ('WL', "Women's L"),
+        ('WXL', "Women's XL"),
+        ('MS', "Men's S"),
+        ('MM', "Men's M"),
+        ('ML', "Men's L"),
+        ('MXL', "Men's XL")
+    ]
+
     event = models.ForeignKey(Event, related_name='event_info', on_delete=models.CASCADE)
     member = models.ForeignKey(User, related_name='user_info', on_delete=models.CASCADE)
     register_date = models.DateTimeField(auto_now_add=True)
     payment = models.ForeignKey('payments.Payment', on_delete=models.CASCADE, null=True)
+
+    shirt_size = models.CharField(
+        max_length=3,
+        choices=SHIRT_CHOICES,
+        default=''
+    )
+
+    diet_restriction = models.CharField(blank=True, null=True, max_length=200)
+
+    options_flag = models.BooleanField(default=False)
 
     def __str__(self):
         return self.member.username + " - " + self.event.event_title

@@ -29,6 +29,7 @@ urlpatterns = [
     path('event/<slug:slug>/create_idea', views.CreateIdeaView.as_view(), name='event-createidea'),
     path('event/<slug:slug>/addvote_idea', views.AddVoteIdea.as_view(), name='event-addvoteidea'),
     path('event/<slug:slug>/remvote_idea', views.RemVoteIdea.as_view(), name='event-remvoteidea'),
+    path('event/<slug:slug>/store_options', views.StoreOptions.as_view(), name='event-storeoptions'),
     path('idea/<slug:slug>', views.IdeaDetailView.as_view(), name='idea-detail'),
     path('idea/<slug:slug>/edit', views.IdeaEditView.as_view(), name='idea-edit'),
     path('idea/<slug:slug>/delete', views.IdeaDeleteView.as_view(), name='idea-delete'),

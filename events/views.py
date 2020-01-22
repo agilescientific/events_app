@@ -4,6 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.views import View
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -33,6 +34,23 @@ from .serializers import IdeaSerializer, EventSerializer, UserSerializer
 
 User = get_user_model()
 
+class OptionsMixin:
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        evObj = Event.objects.get(slug = self.kwargs['slug'])
+        pk = evObj.id
+        regobj = EventRegistration.objects.filter(member_id = self.request.user.id,
+                                                  event_id = pk)
+        q_reg = len(regobj)
+        context['show_options'] = False
+        if q_reg > 0:
+            if evObj.has_registration_options:
+                if regobj[0].options_flag == False:
+                    context['show_options'] = True
+                    print("Here")
+        return context
+
 class IndexView(ListView):
     template_name = "index.html"
     model = Event
@@ -60,16 +78,18 @@ class ForumView(LoginRequiredMixin, DetailView):
 
         return context
 
-class EventDetailView(DetailView):
+class EventDetailView(OptionsMixin, DetailView):
     template_name = "eventDetail.html"
     model = Event
     context_object_name = 'event'
 
     def get_context_data(self,**kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
-        pk = Event.objects.get(slug = self.kwargs['slug']).id
-        q_reg = len(EventRegistration.objects.filter(member_id = self.request.user.id,
-                                                     event_id = pk))
+        evObj = Event.objects.get(slug = self.kwargs['slug'])
+        pk = evObj.id
+        regobj = EventRegistration.objects.filter(member_id = self.request.user.id,
+                                                  event_id = pk)
+        q_reg = len(regobj)
         if q_reg > 0:
             context['registered'] = True
         else:
@@ -804,6 +824,44 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = EventSerializer
+
+class StoreOptions(View, LoginRequiredMixin):
+
+    def post(self, request, slug):
+        SHIRT_CHOICES = {
+        "Women's S": "WS",
+        "Women's M": "WM",
+        "Women's L": "WL",
+        "Women's XL": "WXL",
+        "Men's S": "MS",
+        "Men's M": "MM",
+        "Men's L": "ML",
+        "Men's XL": "MXL"
+        }
+        success_url = '/event/{}'.format(self.kwargs['slug'])
+
+        if request.method == 'POST':
+            if 'shirtsize' in request.POST:
+                evObj = Event.objects.get(slug = self.kwargs['slug'])
+                pk = evObj.id
+                regobj = EventRegistration.objects.filter(member_id = self.request.user.id,
+                                                          event_id = pk)[0]
+                regobj.shirt_size = SHIRT_CHOICES[request.POST["shirtsize"]]
+                regobj.diet_restriction = request.POST["dietrest"]
+                regobj.options_flag = True
+                regobj.save()
+
+                success_url = request.POST["surl"]
+
+                messages.add_message(
+                    self.request, messages.INFO, "Registration options saved!"
+                )
+        else:
+            return HttpResponseRedirect(success_url)
+        
+        
+
+        return HttpResponseRedirect(success_url)
 
 # @csrf_exempt
 # class HandleGitPush(View):

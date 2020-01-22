@@ -10,8 +10,22 @@
       <h1 class="head-pad">
         
       </h1>
-      <h3> You're spot is reserved! Stay tuned for updates on the event website or on <a href="https://softwareunderground.org/">Software Underground</a>.</h3>
+      <h4> Your spot is reserved! Stay tuned for updates on this website or on <a href="https://softwareunderground.org/">Software Underground</a>.</h4>
     </div>
 </div>
 
+{% if show_options %}
+  {% include "options_modal.html" %}
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+  {% if show_options %}
+    <script type="text/javascript">
+      $(window).on('load',function(){
+          $('#optionsModal').modal('show');
+      });
+    </script>
+  {% endif %}
 {% endblock %}

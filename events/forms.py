@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from .models import Organization, Project, Idea
+from .models import Organization, Project, Idea, EventRegistration
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
@@ -13,6 +13,14 @@ from markdownx.fields import MarkdownxFormField
 from django.urls import reverse
 
 from taggit.forms import TagField
+
+class OptionsForm(forms.ModelForm):
+    class Meta:
+        model = EventRegistration
+        fields = ['shirt_size', 'diet_restriction']
+
+    shirt_size = forms.MultipleChoiceField()
+    diet_restriction = forms.CharField()
 
 class OrganizationForm(forms.ModelForm):
     class Meta:
