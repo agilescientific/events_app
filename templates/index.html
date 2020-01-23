@@ -2,7 +2,7 @@
 <!-- Page Content -->
 <div class="container">
 
-  {% for e in events %}
+  {% for e in events|dictsort:"event_startdate" %}
     {% if e.hide %}
       {% if user.is_staff or user.is_superuser %}
         {% now "U" as Unow %}
@@ -64,7 +64,7 @@
   <h1 class="my-4 pddn-30-top pddn-20-bottom">
    </h1>
 
-  {% for e in events %}
+  {% for e in events|dictsort:"event_startdate" %}
 
   {% if e.hide %}
   {% else %}
