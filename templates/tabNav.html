@@ -11,6 +11,8 @@
     <li class="nav-item">
         <a class="nav-link {% if current == 'schedule' %}active{% endif %}" href="/event/{{ event.slug }}/schedule">Schedule</a>
     </li>
+    {% endif %}
+    {% if event.venue %}
     <li class="nav-item">
         <a class="nav-link {% if current == 'venue' %}active{% endif %}" href="/event/{{ event.slug }}/venue">Venue</a>
     </li>
