@@ -7,7 +7,7 @@
         <a class="nav-link {% if current == 'projects' %}active{% endif %}" href="/event/{{ event.slug }}/projects">Projects</a>
     </li>
     {% endif %}
-    {% if event.event_class_id == 3 %}
+    {% if event.schedule %}
     <li class="nav-item">
         <a class="nav-link {% if current == 'schedule' %}active{% endif %}" href="/event/{{ event.slug }}/schedule">Schedule</a>
     </li>
